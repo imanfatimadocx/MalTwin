@@ -26,6 +26,10 @@ DB_PATH          = LOG_DIR / "maltwin.db"
 BEST_MODEL_PATH       = MODEL_DIR / "best_model.pt"
 EVAL_METRICS_PATH     = PROCESSED_DIR / "eval_metrics.json"
 CONFUSION_MATRIX_PATH = PROCESSED_DIR / "confusion_matrix.png"
+ROC_CURVE_PATH        = PROCESSED_DIR / "roc_curves.png"
+TRAINING_CURVES_PATH  = PROCESSED_DIR / "training_curves.png"
+TRAINING_HISTORY_PATH = PROCESSED_DIR / "training_history.json"
+UNSEEN_EVAL_PATH      = PROCESSED_DIR / "unseen_family_eval.json"
 
 # Create directories at import time (safe to call repeatedly)
 for _dir in [PROCESSED_DIR, MODEL_DIR, CHECKPOINT_DIR, LOG_DIR, REPORTS_DIR]:
