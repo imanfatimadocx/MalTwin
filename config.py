@@ -51,6 +51,9 @@ for _dir in [PROCESSED_DIR, MODEL_DIR, CHECKPOINT_DIR, LOG_DIR, REPORTS_DIR]:
 
 # ── Image settings ─────────────────────────────────────────────────────────────
 IMG_SIZE = int(os.getenv("MALTWIN_IMG_SIZE", "128"))
+# 2-D byte layout before resizing: 'malimg' matches how the training images were
+# built (Nataraj et al. 2011 width table); 'square' is the earlier sqrt layout.
+IMAGE_LAYOUT = os.getenv("MALTWIN_IMAGE_LAYOUT", "malimg")
 
 # ── Training hyperparameters ───────────────────────────────────────────────────
 BATCH_SIZE   = int(os.getenv("MALTWIN_BATCH_SIZE",   "32"))
