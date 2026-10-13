@@ -47,8 +47,8 @@ def init_session_state() -> None:
 
     # Set start time once — only on very first run of the session
     if st.session_state[KEY_APP_START_TIME] is None:
-        from datetime import datetime
-        st.session_state[KEY_APP_START_TIME] = datetime.utcnow()
+        from datetime import datetime, timezone
+        st.session_state[KEY_APP_START_TIME] = datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 def clear_file_state() -> None:

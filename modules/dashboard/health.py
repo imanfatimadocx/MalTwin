@@ -16,7 +16,7 @@ get_all_module_statuses() is cached with ttl=30 seconds.
 Individual check functions never raise.
 """
 import streamlit as st
-from datetime import datetime
+from datetime import datetime, timezone
 
 import config
 
@@ -320,7 +320,7 @@ def _format_uptime() -> str:
         start = st.session_state.get(KEY_APP_START_TIME)
         if start is None:
             return 'unknown'
-        delta = datetime.utcnow() - start
+        delta = datetime.now(timezone.utc).replace(tzinfo=None) - start
         total_seconds = int(delta.total_seconds())
         hours, rem    = divmod(total_seconds, 3600)
         minutes, secs = divmod(rem, 60)
