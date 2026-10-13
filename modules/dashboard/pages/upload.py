@@ -14,6 +14,7 @@ from modules.binary_to_image.utils import (
     validate_binary_format,
     compute_pixel_histogram,
     get_file_metadata,
+    compute_sha256,
 )
 from modules.dashboard import state
 from modules.dashboard.theme import image_full_width
@@ -62,6 +63,10 @@ def render():
         _process_upload(uploaded_file)
 
     if state.has_uploaded_file():
+        st.success(
+            "✅ File processed successfully. "
+            "Navigate to **Malware Detection** in the sidebar to analyze."
+        )
         _render_results()
     elif uploaded_file is None:
         st.info("👆 Upload a binary file above to begin.")
@@ -86,6 +91,13 @@ def _process_upload(uploaded_file) -> None:
             f"Cause: File exceeds the 50 MB limit (uploaded: {size_mb} MB). "
             "Action: Upload a smaller binary file."
         )
+        return
+
+    # Streamlit re-runs this page on every interaction while the uploader still
+    # holds the file. Skip files we have already processed (same SHA-256) so a
+    # rerun does not wipe the detection result for the current file.
+    existing = st.session_state.get(state.KEY_FILE_META)
+    if existing and existing.get('sha256') == compute_sha256(file_bytes):
         return
 
     # Clear stale results from any previous upload
@@ -126,10 +138,8 @@ def _process_upload(uploaded_file) -> None:
     st.session_state[state.KEY_FILE_META] = get_file_metadata(
         file_bytes, uploaded_file.name, file_format
     )
-    st.success(
-        "✅ File processed successfully. "
-        "Navigate to **Malware Detection** in the sidebar to analyze."
-    )
+    # Re-run once so the sidebar (drawn before this page) shows the new file
+    st.rerun()
 
 
 def _render_results() -> None:

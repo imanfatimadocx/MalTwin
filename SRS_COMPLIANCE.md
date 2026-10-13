@@ -55,7 +55,7 @@
 |-------|-------|----------------|--------|
 | FR-B1 | Binary uploaded | `upload.py` → `validate_binary_format()` → `BinaryConverter` → `compute_sha256()` | ✅ Implemented |
 | FR-B2 | Detection run requested | `detection.py` → `predict_single()` → softmax probabilities | ✅ Implemented |
-| FR-B3 | Detection result available → DB log | `detection.py` `_run_detection()` → `log_detection_event()` non-blocking retry | ✅ Implemented |
+| FR-B3 | Detection result available → DB log | `detection.py` → `log_detection_event()`; failure never blocks the result. Deviation: retries once after 0.1 s (SRS: 2 s) | ✅ Implemented (minor deviation) |
 | FR-B4 | Forensic report requested | `detection.py` → `generate_pdf_report()` / `generate_json_report()` + MITRE query | ✅ Implemented (Step 2) |
 | FR-B5 | Digital Twin start requested | Deferred — Docker/Mininet not yet deployed | ⚠️ Deferred |
 | FR-B6 | Grad-CAM heatmap requested | `detection.py` → `generate_gradcam()` via Captum `LayerGradCam` | ✅ Implemented (Step 1) |
@@ -126,7 +126,7 @@
 | BO-1 | Digital Twin IIoT simulation | `digital_twin.py` stub; Docker check in health.py | ⚠️ Deferred |
 | BO-2 | Binary-to-image conversion pipeline | `modules/binary_to_image/` — PE/ELF → 128×128 grayscale | ✅ Implemented |
 | BO-3 | Data enhancement + class balancing | `modules/enhancement/` — augmentation + `ClassAwareOversampler` | ✅ Implemented |
-| BO-4 | CNN malware classification | `MalTwinCNN` — 3-block CNN, 25-class, ~3.2M params | ✅ Implemented |
+| BO-4 | CNN malware classification | `MalTwinCNN` — 3-block CNN, 25-class, 1.35 M parameters | ✅ Implemented |
 | BO-5 | Evaluation metrics (acc/prec/rec/F1/CM) on seen *and unseen* samples | `evaluator.py` adds ROC-AUC, per-class FPR, MCC, top-3; `scripts/evaluate_unseen.py` leave-families-out experiment | ✅ Implemented — final numbers require the Malimg training run |
 | BO-6 | Grad-CAM XAI | `gradcam.py` via Captum `LayerGradCam`, jet overlay, heatmap export | ✅ Implemented |
 | BO-7 | Interactive Streamlit dashboard | 6-page dashboard with training, gallery, history, XAI, reporting | ✅ Implemented |

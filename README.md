@@ -363,7 +363,7 @@ Flatten → Linear(2048→512) → ReLU → Dropout(0.5) → Linear(512→25)
 Output: (batch, 25)   ← raw logits, softmax applied at inference only
 ```
 
-**~3.2M parameters.** Trained with Adam + ReduceLROnPlateau, CrossEntropyLoss, weighted random oversampling to handle the 36:1 class imbalance in Malimg (Allaple.A has 2,949 samples; Skintrim.N has 80).
+**1,348,793 parameters (≈1.35 M).** Trained with Adam + ReduceLROnPlateau, CrossEntropyLoss, weighted random oversampling to handle the 36:1 class imbalance in Malimg (Allaple.A has 2,949 samples; Skintrim.N has 80).
 
 ---
 
