@@ -16,6 +16,8 @@ from modules.binary_to_image.utils import (
     get_file_metadata,
 )
 from modules.dashboard import state
+from modules.dashboard.theme import image_full_width
+from modules.dashboard.theme import mono
 
 def render():
     from modules.dashboard.theme import apply_theme, COLORS, section_header, mono, status_badge, confidence_bar_html, kpi_card
@@ -145,10 +147,9 @@ def _render_results() -> None:
         st.subheader("Grayscale Visualization")
         converter = BinaryConverter(img_size=config.IMG_SIZE)
         png_bytes = converter.to_png_bytes(img_array)
-        st.image(
+        image_full_width(
             png_bytes,
             caption=f"Grayscale visualization ({config.IMG_SIZE}×{config.IMG_SIZE} pixels, 8-bit)",
-            use_column_width=True,
         )
 
     # ── Right: Metadata + Histogram ───────────────────────────────────────────
