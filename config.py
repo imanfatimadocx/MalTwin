@@ -31,6 +31,20 @@ TRAINING_CURVES_PATH  = PROCESSED_DIR / "training_curves.png"
 TRAINING_HISTORY_PATH = PROCESSED_DIR / "training_history.json"
 UNSEEN_EVAL_PATH      = PROCESSED_DIR / "unseen_family_eval.json"
 
+# ── Dynamic analysis (behavioural, IoT-23 / Digital Twin conn.log) ─────────────
+DYNAMIC_DATA_DIR            = Path(os.getenv("MALTWIN_DYNAMIC_DATA_DIR", str(BASE_DIR / "data/iot23")))
+DYNAMIC_MODEL_PATH          = MODEL_DIR / "dynamic_model.joblib"
+DYNAMIC_METRICS_PATH        = PROCESSED_DIR / "dynamic_metrics.json"
+DYNAMIC_CM_PATH             = PROCESSED_DIR / "dynamic_confusion_matrix.png"
+DYNAMIC_IMPORTANCE_PATH     = PROCESSED_DIR / "dynamic_feature_importance.png"
+MITRE_BEHAVIOUR_JSON_PATH   = BASE_DIR / "data" / "mitre_ics_behaviour_mapping.json"
+
+# ── Hybrid fusion ──────────────────────────────────────────────────────────────
+FUSION_STATIC_WEIGHT  = float(os.getenv("MALTWIN_FUSION_STATIC_WEIGHT",  "0.5"))
+FUSION_DYNAMIC_WEIGHT = float(os.getenv("MALTWIN_FUSION_DYNAMIC_WEIGHT", "0.5"))
+FUSION_MALICIOUS_THRESHOLD  = float(os.getenv("MALTWIN_FUSION_MALICIOUS",  "0.70"))
+FUSION_SUSPICIOUS_THRESHOLD = float(os.getenv("MALTWIN_FUSION_SUSPICIOUS", "0.40"))
+
 # Create directories at import time (safe to call repeatedly)
 for _dir in [PROCESSED_DIR, MODEL_DIR, CHECKPOINT_DIR, LOG_DIR, REPORTS_DIR]:
     _dir.mkdir(parents=True, exist_ok=True)
