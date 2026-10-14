@@ -22,9 +22,20 @@ pytest tests/ -m "not integration" -q   # expect: all passed, a few skipped
 
 ---
 
-## 1. Train the CNN on Malimg (the most important step)
+## 1. Train the CNN on Malimg + a Benign class (the most important step)
 
-Put the dataset at `data/malimg/<Family>/*.png` (25 folders), then:
+Put the dataset at `data/malimg/<Family>/*.png` (25 folders).
+
+**First add a Benign class.** Malimg contains malware only, so a model trained on it alone calls *every* file malware, including clean ones. Build a 26th class from clean system binaries:
+
+```bash
+# Windows (run in the project folder)
+python scripts/build_benign_class.py --src "C:\Windows\System32" "C:\Windows\SysWOW64" --max 1500
+# Linux
+python scripts/build_benign_class.py --src /usr/bin /usr/sbin /usr/lib --max 1500
+```
+
+This writes `data/malimg/Benign/*.png` plus `manifest.csv`. Then train:
 
 ```bash
 python scripts/train.py --epochs 2 --workers 0     # 2-minute smoke run first
@@ -35,6 +46,17 @@ Time: roughly 1–2 hours on a laptop CPU, a few minutes on a GPU. Google Colab 
 
 Produces in `data/processed/`:
 `eval_metrics.json`, `confusion_matrix.png`, `roc_curves.png`, `training_curves.png`, `training_history.json`, `class_names.json`, plus `models/best_model.pt`.
+
+### 1b. Check clean files are no longer called malware
+
+Test on clean software from a **different** folder (files used in training are skipped automatically):
+
+```bash
+python scripts/evaluate_benign.py --src "C:\Program Files" --max 500     # Windows
+python scripts/evaluate_benign.py --src /opt /usr/local --max 500         # Linux
+```
+
+This produces `data/processed/benign_eval.json`: the % of clean files called Benign, the false positive rate, and how many of those false alarms were *confident*.
 
 ## 2. Unseen-variant experiment (the "variant detection" result)
 

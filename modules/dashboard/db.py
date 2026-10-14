@@ -222,8 +222,8 @@ def get_detection_stats(db_path: Path) -> dict:
     Returns:
         {
             'total_analyzed': int,
-            'total_malware':  int,   # same as total (all detections are malware)
-            'total_benign':   int,   # always 0 for now
+            'total_malware':  int,   # detections not classified Benign
+            'total_benign':   int,   # detections classified Benign
             'model_accuracy': float | None,  # from eval_metrics.json if available
         }
     """
@@ -235,6 +235,10 @@ def get_detection_stats(db_path: Path) -> dict:
             total = conn.execute(
                 "SELECT COUNT(*) FROM detection_events"
             ).fetchone()[0]
+            benign = conn.execute(
+                "SELECT COUNT(*) FROM detection_events WHERE predicted_family = ?",
+                (config.BENIGN_CLASS_NAME,),
+            ).fetchone()[0]
         acc = None
         metrics_path = config.PROCESSED_DIR / 'eval_metrics.json'
         if metrics_path.exists():
@@ -242,8 +246,8 @@ def get_detection_stats(db_path: Path) -> dict:
                 acc = json.load(f).get('accuracy')
         return {
             'total_analyzed': total,
-            'total_malware':  total,
-            'total_benign':   0,
+            'total_malware':  total - benign,
+            'total_benign':   benign,
             'model_accuracy': acc,
         }
     except Exception:

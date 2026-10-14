@@ -99,4 +99,6 @@ DASHBOARD_TITLE = "MalTwin — IIoT Malware Detection"
 
 # ── Malimg dataset metadata ────────────────────────────────────────────────────
 MALIMG_EXPECTED_FAMILIES = 25
+# Name of the optional clean-software class added with scripts/build_benign_class.py
+BENIGN_CLASS_NAME = os.getenv("MALTWIN_BENIGN_CLASS", "Benign")
 MALIMG_TOTAL_SAMPLES     = 9339

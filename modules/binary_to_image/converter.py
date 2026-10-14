@@ -93,18 +93,31 @@ class BinaryConverter:
             raise ValueError(
                 "Binary file is empty or too small to convert (minimum 64 bytes)"
             )
-        byte_array = np.frombuffer(file_bytes, dtype=np.uint8)
-        n = len(byte_array)
-        width = self._width(n)
-        rows  = n // width
-        trimmed   = byte_array[:rows * width]
-        reshaped  = trimmed.reshape((rows, width))
+        reshaped = self.layout_2d(file_bytes)
         resized   = cv2.resize(
             reshaped,
             (self.img_size, self.img_size),
             interpolation=cv2.INTER_LINEAR,
         )
         return resized.astype(np.uint8)
+
+    def layout_2d(self, file_bytes: bytes) -> np.ndarray:
+        """
+        Lay the bytes out as a 2-D uint8 array WITHOUT resizing.
+
+        With layout='malimg' this is exactly how a Malimg dataset image is
+        built, so saving it as PNG produces a training image in the same
+        format as the 25 Malimg families (used to build the Benign class).
+        """
+        if len(file_bytes) < 64:
+            raise ValueError(
+                "Binary file is empty or too small to convert (minimum 64 bytes)"
+            )
+        byte_array = np.frombuffer(file_bytes, dtype=np.uint8)
+        n = len(byte_array)
+        width = self._width(n)
+        rows = n // width
+        return byte_array[:rows * width].reshape((rows, width))
 
     def to_png_bytes(self, img_array: np.ndarray) -> bytes:
         """

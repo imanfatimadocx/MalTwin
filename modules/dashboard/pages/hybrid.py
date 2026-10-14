@@ -50,6 +50,23 @@ def render():
         _render_whatif(w_s, w_d, COLORS, section_header)
 
 
+def static_evidence(det: dict) -> tuple[float, str | None]:
+    """
+    Static score fed to fusion.
+
+    With a Benign class the CNN gives P(Benign) directly, so the static score is
+    the probability of malware, 1 − P(Benign), and the family is None when the
+    top-1 class is Benign. Without a Benign class (Malimg only) the score is
+    the top-1 family confidence, as in the original design.
+    """
+    probs = det.get('probabilities', {})
+    benign = config.BENIGN_CLASS_NAME
+    if benign in probs:
+        fam = None if det['predicted_family'] == benign else det['predicted_family']
+        return float(1.0 - probs[benign]), fam
+    return float(det['confidence']), det['predicted_family']
+
+
 def _render_evidence_mode(w_s, w_d, COLORS, section_header, kpi_card):
     det = st.session_state.get(state.KEY_DETECTION)
     dyn = st.session_state.get(state.KEY_DYNAMIC_REPORT)
@@ -88,11 +105,14 @@ def _render_evidence_mode(w_s, w_d, COLORS, section_header, kpi_card):
 
     if st.button("Compute hybrid verdict", type="primary"):
         from modules.reporting.mitre_mapper import get_mitre_mapping
-        static_mitre = get_mitre_mapping(det['predicted_family']) if det else None
+        static_score, family = None, None
+        if det:
+            static_score, family = static_evidence(det)
+        static_mitre = get_mitre_mapping(family) if family else None
         result = fuse(
-            static_conf=float(det['confidence']) if det else None,
+            static_conf=static_score,
             dynamic_score=float(dyn['capture_score']) if dyn else None,
-            family=det['predicted_family'] if det else None,
+            family=family,
             dominant_behaviour=dyn['dominant_behaviour'] if dyn else None,
             static_mitre=static_mitre,
             dynamic_mitre=dyn['mitre'] if dyn else None,

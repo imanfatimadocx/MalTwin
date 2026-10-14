@@ -217,7 +217,20 @@ def _render_results() -> None:
     # ── A: Prediction + Confidence ────────────────────────────────────────────
     st.subheader("Detection Result")
 
-    if confidence >= config.CONFIDENCE_GREEN:
+    is_benign = (family == config.BENIGN_CLASS_NAME)
+    has_benign_class = config.BENIGN_CLASS_NAME in result.get('probabilities', {})
+
+    if is_benign and confidence >= config.CONFIDENCE_AMBER:
+        st.success(
+            f"No malware family matched — classified **Benign** "
+            f"({confidence * 100:.1f}% confidence)"
+        )
+    elif is_benign:
+        st.warning(
+            f"Leaning Benign, but only {confidence * 100:.1f}% confident. "
+            "Manual verification recommended."
+        )
+    elif confidence >= config.CONFIDENCE_GREEN:
         st.success(f"Detected: {family} — {confidence * 100:.1f}% confidence")
     elif confidence >= config.CONFIDENCE_AMBER:
         st.warning(
@@ -238,7 +251,7 @@ def _render_results() -> None:
         f'border-radius:6px;padding:20px 24px;margin-bottom:16px;">'
         f'<div style="font-family:\'DM Sans\',sans-serif;font-size:13px;'
         f'color:{COLORS["text_secondary"]};margin-bottom:8px;letter-spacing:0.04em;">'
-        f'DETECTED FAMILY</div>'
+        f'{"CLASSIFICATION" if is_benign else "DETECTED FAMILY"}</div>'
         f'<div style="font-family:\'JetBrains Mono\',monospace;font-size:26px;'
         f'font-weight:700;color:{COLORS["text_primary"]};margin-bottom:16px;">'
         f'{family}</div>'
@@ -247,13 +260,19 @@ def _render_results() -> None:
         unsafe_allow_html=True,
     )
 
-    # Benign class notice (architectural constraint — SRS_COMPLIANCE.md)
-    st.caption(
-        "MalTwin classifies binaries into known malware families only. "
-        "There is no benign class — every uploaded binary receives a malware family prediction. "
-        "Low confidence scores (<50%) indicate the binary may not match any trained family. "
-        "This is a known architectural constraint of the Malimg-trained model."
-    )
+    if has_benign_class:
+        st.caption(
+            f"The model knows {len(result['probabilities']) - 1} malware families plus a "
+            "Benign class built from clean system binaries. Malware probability = "
+            f"{(1 - result['probabilities'].get(config.BENIGN_CLASS_NAME, 0)) * 100:.1f}%."
+        )
+    else:
+        st.caption(
+            "This model was trained on Malimg only, which has no benign class — every "
+            "binary receives a malware family prediction. Low confidence (<50%) suggests "
+            "the binary may not match any known family. Build the Benign class with "
+            "scripts/build_benign_class.py and retrain to fix this."
+        )
 
     # ── B: Top-3 Predictions ──────────────────────────────────────────────────
     st.markdown("**Top 3 Predictions:**")
@@ -285,7 +304,10 @@ def _render_results() -> None:
             "techniques specific to operational technology environments."
         ),
     )
-    _render_mitre_mapping(family)
+    if is_benign:
+        st.info("No MITRE ATT&CK techniques — the binary was classified as Benign.")
+    else:
+        _render_mitre_mapping(family)
 
     st.markdown("---")
 
