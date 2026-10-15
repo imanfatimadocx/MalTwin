@@ -97,8 +97,9 @@ def _run_detection() -> None:
             result = predict_single(model, img_array, class_names, config.DEVICE)
             st.session_state[state.KEY_DETECTION] = result
 
-            # Log to SQLite — non-blocking (log_detection_event never raises)
-            log_detection_event(
+            # Log to SQLite — non-blocking (log_detection_event never raises);
+            # the row id links any report generated later (report_events FK)
+            st.session_state[state.KEY_DETECTION_EVENT_ID] = log_detection_event(
                 db_path=config.DB_PATH,
                 file_name=meta['name'],
                 sha256=meta['sha256'],
@@ -365,7 +366,7 @@ def _render_results() -> None:
                 from modules.dashboard.db import log_report_event
                 log_report_event(
                     config.DB_PATH,
-                    detection_event_id=None,   # not tracked in session state
+                    detection_event_id=st.session_state.get(state.KEY_DETECTION_EVENT_ID),
                     sha256=report_data['sha256'],
                     report_format='PDF',
                     gradcam_included=report_data['gradcam'].get('generated', False),
@@ -383,20 +384,22 @@ def _render_results() -> None:
         from modules.reporting.json_report import generate_json_report
         from modules.dashboard.db import log_report_event
         json_bytes = generate_json_report(report_data)
-        # Log JSON report generation (UC-03 postcondition)
-        log_report_event(
-            config.DB_PATH,
-            detection_event_id=None,
-            sha256=report_data['sha256'],
-            report_format='JSON',
-            gradcam_included=report_data['gradcam'].get('generated', False),
-        )
         meta = st.session_state[state.KEY_FILE_META]
+        # Log the JSON report when it is actually downloaded (UC-06 postcondition),
+        # not on every page render.
         st.download_button(
             label="📥 Download JSON Report",
             data=json_bytes,
             file_name=f"maltwin_report_{meta['sha256'][:8]}.json",
             mime="application/json",
+            on_click=log_report_event,
+            kwargs=dict(
+                db_path=config.DB_PATH,
+                detection_event_id=st.session_state.get(state.KEY_DETECTION_EVENT_ID),
+                sha256=report_data['sha256'],
+                report_format='JSON',
+                gradcam_included=report_data['gradcam'].get('generated', False),
+            ),
             use_container_width=True,
             help="Full structured JSON report with MITRE ATT&CK mapping and detection metadata.",
         )

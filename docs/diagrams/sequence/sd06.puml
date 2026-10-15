@@ -1,0 +1,31 @@
+@startuml
+!include ../style.iuml
+autonumber
+actor "Security Analyst /\nAcademic Evaluator" as A
+boundary "Detection page\n(Module 6)" as UI
+control "mitre_mapper\n(Module 8)" as MM
+control "pdf_report /\njson_report (Module 8)" as REP
+control "db\n(Module 8)" as DB
+database "SQLite" as SQL
+A -> UI : click "Generate PDF Report" or "JSON"
+activate UI
+UI -> UI : _build_report_data()
+UI -> MM : get_mitre_mapping(family)  «include» UC-04
+MM --> UI : tactics, techniques
+alt PDF requested
+  UI -> REP : generate_pdf_report(report_data)
+  activate REP
+  REP --> UI : pdf_bytes | None
+  deactivate REP
+  alt pdf_bytes is None (UC-06 2a)
+    UI --> A : "PDF generation failed…" (JSON still offered)
+  end
+else JSON requested
+  UI -> REP : generate_json_report(report_data)
+  REP --> UI : json_bytes
+end
+UI -> DB : log_report_event(sha256, format, gradcam_included)
+DB -> SQL : INSERT INTO report_events …
+UI --> A : download button (report file)
+deactivate UI
+@enduml

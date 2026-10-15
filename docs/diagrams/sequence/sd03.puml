@@ -1,5 +1,5 @@
 @startuml
-!include style.iuml
+!include ../style.iuml
 autonumber
 actor "Security Analyst" as A
 boundary "Detection page\n(Module 6)" as UI
@@ -10,9 +10,11 @@ database "SQLite" as SQL
 control "mitre_mapper\n(Module 8)" as MM
 A -> UI : click "Run Detection"
 activate UI
-alt model not loaded (UC-02 A1)
+alt no file uploaded (UC-03 1a)
+  UI --> A : "Please upload a file on the Binary Upload page"
+else no trained model (UC-03 2a)
   UI --> A : "No trained model is available…"
-else model loaded
+else file and model available
   UI -> INF : predict_single(model, image, class_names)
   activate INF
   INF -> INF : normalise to [-1, 1], add batch dimension
@@ -25,17 +27,21 @@ else model loaded
   deactivate INF
   UI -> DB : log_detection_event(sha256, family, confidence)
   activate DB
-  DB -> SQL : INSERT … VALUES (?, ?, …)
+  DB -> SQL : INSERT INTO detection_events …
   alt write fails
     DB -> SQL : retry once
   end
   DB --> UI : (never raises)
   deactivate DB
-  UI -> MM : get_mitre_mapping(family)
-  activate MM
-  MM --> UI : tactics, techniques
-  deactivate MM
-  UI --> A : label, confidence bar,\nprobability chart, MITRE table
+  alt family = Benign (UC-03 3a)
+    UI --> A : "classified Benign", no MITRE techniques
+  else malware family
+    UI -> MM : get_mitre_mapping(family)  «include» UC-04
+    activate MM
+    MM --> UI : tactics, techniques
+    deactivate MM
+    UI --> A : label, confidence bar, probability chart, MITRE table
+  end
 end
 deactivate UI
 @enduml

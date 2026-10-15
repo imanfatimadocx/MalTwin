@@ -1,0 +1,38 @@
+@startuml
+!include ../style.iuml
+autonumber
+actor "Security Analyst" as A
+boundary "Dynamic Analysis page\n(Module 6)" as UI
+control "zeek_parser\n(Module 9)" as ZP
+control "features\n(Module 9)" as FE
+entity "DynamicDetector\n(random forest)" as DD
+entity "Behaviour MITRE\nmapping (JSON)" as MJ
+A -> UI : open page
+activate UI
+UI -> DD : DynamicDetector.load(model_path)
+alt no behaviour model (UC-07 1b)
+  UI --> A : "No dynamic model available…" (how to train)
+else model loaded
+  A -> UI : upload conn.log, click "Analyse"
+  UI -> ZP : parse_conn_log(file)
+  alt not a valid conn.log (UC-07 1a)
+    ZP --> UI : ValueError
+    UI --> A : "Error: … Cause: … Action: …"
+  else valid
+    ZP --> UI : flows (DataFrame)
+    UI -> DD : analyse_capture(flows, mitre_db)
+    activate DD
+    DD -> FE : extract_flow_features(flows)
+    FE --> DD : 61 IP-free features
+    DD -> DD : predict_proba per flow
+    DD -> DD : capture score = mean of top 5% P(malicious)
+    DD -> DD : explain(flagged flows)
+    DD -> MJ : look up behaviours  «include» UC-04
+    MJ --> DD : techniques
+    DD --> UI : DynamicReport (score, verdict, profile, explanation, MITRE)
+    deactivate DD
+    UI --> A : verdict, behaviours, top features, MITRE table
+  end
+end
+deactivate UI
+@enduml

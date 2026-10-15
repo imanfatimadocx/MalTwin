@@ -54,12 +54,12 @@ FR7.3,The system shall provide a Hybrid Verdict screen with a what-if simulator 
 FR7.4,The system shall evaluate fusion on paired static and dynamic evidence of the same samples.,Deferred (final evaluation),Deferred,,
 FR-B1,"When a binary is uploaded, the system shall validate it, read its bytes and build the 2-D image.",Implemented,Test,AT-M2-01 AT-M2-02 AT-M2-08,PASS
 FR-B2,"When detection is requested, the system shall load the model, preprocess the image and run a forward pass.",Implemented,Test,AT-M5-01 AT-M5-02 AT-M5-06 AT-UI-04,PASS
-FR-B3,"When a detection result is available, the system shall log the event to SQLite without blocking the result.",Implemented,Test,AT-DB-01 AT-DB-05 AT-UI-04,PASS
-FR-B4,"When a report is requested, the system shall compile it with the MITRE data of the predicted family.",Implemented,Test,AT-M8-03 AT-M8-04,PASS
+FR-B3,"When a detection result is available, the system shall log the event to SQLite without blocking the result.",Implemented,Test,AT-DB-01 AT-DB-05 AT-DB-07 AT-DB-08 AT-UI-04,PASS
+FR-B4,"When a report is requested, the system shall compile it with the MITRE data of the predicted family.",Implemented,Test,AT-DB-07 AT-M8-03 AT-M8-04,PASS
 FR-B5,"When the Digital Twin is started, the system shall create the containers and the isolated network.",Deferred (final evaluation),Deferred,,
 FR-B6,"When a heatmap is requested, the system shall compute Grad-CAM through hooks on the last convolutional layer.",Implemented,Test,AT-M7-01 AT-M7-02 AT-M7-03,PASS
 REL-1,Identical input shall give identical results (variance < 0.5% over 10 runs).,Implemented,Test,AT-M2-09 AT-M5-05,PASS
-REL-2,Corrupt or malformed files shall be handled without a crash.,Implemented,Test,AT-M2-04 AT-M2-05 AT-M2-10 AT-M7-03,PASS
+REL-2,Corrupt or malformed files shall be handled without a crash.,Implemented,Test,AT-DB-08 AT-M2-04 AT-M2-05 AT-M2-10 AT-M7-03,PASS
 REL-3,The Digital Twin shall run for at least 4 hours between failures.,Deferred (final evaluation),Deferred,,
 REL-4,No detection record shall be lost on an unclean shutdown (SQLite WAL).,Implemented,Test,AT-DB-02,PASS
 REL-5,Two concurrent dashboard sessions shall not interfere with each other.,Implemented,Inspection,,

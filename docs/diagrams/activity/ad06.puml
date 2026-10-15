@@ -1,0 +1,28 @@
+@startuml
+!include ../style.iuml
+|Analyst / Evaluator|
+start
+:Choose report format;
+|System|
+:Collect file details, prediction, top-3;
+:Look up MITRE mapping of family;
+if (heatmap computed?) then ([yes])
+  :Attach heatmap overlay;
+else ([no])
+endif
+if (format?) then ([PDF])
+  :Generate PDF (FPDF2);
+  if (generation succeeded?) then ([no])
+    :Show error, offer JSON instead;
+    stop
+  else ([yes])
+  endif
+else ([JSON])
+  :Generate structured JSON;
+endif
+:Log report event (format, gradcam flag);
+:Offer file for download;
+|Analyst / Evaluator|
+:Save report;
+stop
+@enduml

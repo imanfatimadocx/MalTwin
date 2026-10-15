@@ -1,0 +1,37 @@
+@startuml
+!include ../style.iuml
+|Security Analyst|
+start
+:Open Dynamic Analysis;
+|System|
+if (behaviour model available?) then ([no])
+  :Explain how to train the model;
+  stop
+else ([yes])
+endif
+|Security Analyst|
+:Upload Zeek conn.log;
+|System|
+if (size ≤ 50 MB and valid conn.log?) then ([no])
+  :Show error (what / cause / action);
+  stop
+else ([yes])
+endif
+:Parse flows;
+:Extract 61 IP-free features per flow;
+:Predict behaviour and P(malicious) per flow;
+:Capture score = mean of top 5% P(malicious);
+if (score ≥ 0.8?) then ([yes])
+  :Verdict MALICIOUS;
+elseif (score ≥ 0.5?) then ([yes])
+  :Verdict SUSPICIOUS;
+else ([no])
+  :Verdict BENIGN;
+endif
+:Explain flagged flows\n(importance, deviation from benign);
+:Map behaviours to MITRE ATT&CK for ICS;
+:Display report;
+|Security Analyst|
+:Review behaviours and techniques;
+stop
+@enduml

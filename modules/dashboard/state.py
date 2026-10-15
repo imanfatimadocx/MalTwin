@@ -13,6 +13,7 @@ KEY_CLASS_NAMES  = 'class_names'       # list[str] or None
 KEY_IMG_ARRAY    = 'img_array'         # np.ndarray (128,128) uint8 or None
 KEY_FILE_META    = 'file_meta'         # dict from get_file_metadata() or None
 KEY_DETECTION    = 'detection_result'  # dict from predict_single() or None
+KEY_DETECTION_EVENT_ID = 'detection_event_id'  # id of the detection_events row, or None
 KEY_MODEL_LOADED = 'model_loaded'      # bool
 KEY_DEVICE_INFO  = 'device_info'       # str e.g. "cuda:0" or "cpu"
 KEY_APP_START_TIME = 'app_start_time'   # datetime — set once at first run
@@ -37,6 +38,7 @@ def init_session_state() -> None:
         KEY_IMG_ARRAY:    None,
         KEY_FILE_META:    None,
         KEY_DETECTION:    None,
+        KEY_DETECTION_EVENT_ID: None,
         KEY_MODEL_LOADED: False,
         KEY_DEVICE_INFO:  'unknown',
         KEY_APP_START_TIME: None,
@@ -67,6 +69,7 @@ def clear_file_state() -> None:
     st.session_state[KEY_IMG_ARRAY] = None
     st.session_state[KEY_FILE_META] = None
     st.session_state[KEY_DETECTION] = None
+    st.session_state[KEY_DETECTION_EVENT_ID] = None
     st.session_state[KEY_HEATMAP] = None
 
 

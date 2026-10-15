@@ -147,6 +147,11 @@ def test_report_section_offers_pdf_and_json(env):
     pdf = [b for b in at.button if "Generate PDF Report" in b.label][0]
     pdf.click().run()
     assert not at.exception and not [e for e in at.error if "PDF generation failed" in e.value]
+    from modules.dashboard.db import get_connection           # report linked to its detection
+    with get_connection(config.DB_PATH) as conn:
+        rows = conn.execute("SELECT report_format, detection_event_id FROM report_events").fetchall()
+    assert [(r[0], r[1]) for r in rows] == [("PDF", at.session_state[state.KEY_DETECTION_EVENT_ID])]
+    assert rows[0][1] is not None
 
 
 @pytest.mark.rtm("AT-UI-06", "FR1.4", "FR1.2")

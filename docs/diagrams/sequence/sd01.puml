@@ -1,0 +1,40 @@
+@startuml
+!include ../style.iuml
+autonumber
+actor "Security Analyst" as A
+boundary "Binary Upload page\n(Module 6)" as UI
+control "utils\n(Module 2)" as U
+control "BinaryConverter\n(Module 2)" as C
+entity "Session state" as S
+A -> UI : select file
+activate UI
+UI -> UI : read bytes
+alt size > 50 MB (UC-01 3a)
+  UI --> A : "Error: File too large. Cause… Action…"
+else size ≤ 50 MB
+  UI -> U : compute_sha256(bytes)
+  U --> UI : sha256
+  alt same SHA-256 already processed
+    UI --> A : keep current result (no re-processing)
+  else new file
+    UI -> U : validate_binary_format(bytes)
+    alt not PE / ELF
+      U --> UI : ValueError
+      UI --> A : "Error: Unsupported file format. Cause… Action…"
+    else PE or ELF
+      U --> UI : "PE" | "ELF"
+      UI -> C : convert(bytes)
+      activate C
+      C -> C : layout_2d() with Malimg width table
+      C -> C : resize to 128 × 128
+      C --> UI : img_array
+      deactivate C
+      UI -> U : get_file_metadata(bytes, name, format)
+      U --> UI : metadata
+      UI -> S : store img_array, metadata
+      UI --> A : image, metadata, histogram
+    end
+  end
+end
+deactivate UI
+@enduml

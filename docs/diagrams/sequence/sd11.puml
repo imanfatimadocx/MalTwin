@@ -1,0 +1,46 @@
+@startuml
+!include ../style.iuml
+autonumber
+actor "Security Researcher" as R
+boundary "Training page\n(Module 6)" as UI
+control "TrainingJob\n(training_manager)" as J
+participant "scripts/train.py\n(subprocess)" as T
+control "MalimgDataset +\nClassAwareOversampler\n(Modules 3, 4)" as DS
+entity "MalTwinCNN" as CNN
+database "models/,\ndata/processed/" as FS
+R -> UI : set epochs, lr, batch size, strategy; click Start
+activate UI
+UI -> J : start(args)
+J -> T : Popen(train.py --epochs … --oversample …)
+activate T
+T -> DS : validate_dataset_integrity(); get_dataloaders()  «include» UC-10
+DS --> T : balanced train loader, val, test loaders
+loop each epoch
+  T -> CNN : train one epoch (Adam, cross-entropy)
+  T -> CNN : validate
+  opt best validation accuracy so far
+    T -> FS : save best_model.pt
+  end
+  T --> J : log line "Epoch e/E … val_acc …"
+end
+loop while running (every refresh)
+  UI -> J : poll()
+  J --> UI : running?, new log lines, return code
+  UI --> R : progress bar, log
+end
+opt researcher stops (UC-11 3a)
+  R -> UI : click Stop
+  UI -> J : stop()
+  J -> T : terminate()
+end
+T -> FS : eval_metrics.json, balanced_eval.json, plots
+T --> J : exit code
+deactivate T
+alt exit code 0
+  UI -> UI : reload model and class names
+  UI --> R : "Training complete", best val accuracy
+else failure (UC-11 3b)
+  UI --> R : error output
+end
+deactivate UI
+@enduml

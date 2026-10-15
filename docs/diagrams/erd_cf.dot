@@ -1,0 +1,25 @@
+graph ERD {
+graph [splines=false, outputorder=edgesfirst, pad=0.3];
+node [shape=plain, fontname="DejaVu Sans", fontsize=11];
+edge [fontname="DejaVu Sans", fontsize=10, color="#333333", dir=both, arrowsize=1.0, penwidth=1.1];
+DE [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#1F3864" BGCOLOR="#F7F9FC"><TR><TD BGCOLOR="#DCE4F2"><B>DETECTION_EVENT</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK</B>  id : INTEGER</TD></TR><HR/><TR><TD ALIGN="LEFT">timestamp : TEXT</TD></TR><TR><TD ALIGN="LEFT">file_name : TEXT</TD></TR><TR><TD ALIGN="LEFT">sha256 : TEXT</TD></TR><TR><TD ALIGN="LEFT">file_format : TEXT</TD></TR><TR><TD ALIGN="LEFT">file_size : INTEGER</TD></TR><TR><TD ALIGN="LEFT"><B>FK</B>  predicted_family : TEXT</TD></TR><TR><TD ALIGN="LEFT">confidence : REAL</TD></TR><TR><TD ALIGN="LEFT">device_used : TEXT</TD></TR></TABLE>>, pos="0,4.2!"];
+RE [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#1F3864" BGCOLOR="#F7F9FC"><TR><TD BGCOLOR="#DCE4F2"><B>REPORT_EVENT</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK</B>  id : INTEGER</TD></TR><HR/><TR><TD ALIGN="LEFT">timestamp : TEXT</TD></TR><TR><TD ALIGN="LEFT"><B>FK</B>  detection_event_id : INTEGER</TD></TR><TR><TD ALIGN="LEFT">sha256 : TEXT</TD></TR><TR><TD ALIGN="LEFT">report_format : TEXT</TD></TR><TR><TD ALIGN="LEFT">gradcam_included : INTEGER</TD></TR></TABLE>>, pos="0,0!"];
+MF [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#1F3864" BGCOLOR="#F7F9FC"><TR><TD BGCOLOR="#DCE4F2"><B>MALWARE_FAMILY</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK</B>  name : TEXT</TD></TR><HR/><TR><TD ALIGN="LEFT">class_index : INTEGER</TD></TR><TR><TD ALIGN="LEFT">description : TEXT</TD></TR></TABLE>>, pos="4.6,4.2!"];
+FT [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#1F3864" BGCOLOR="#F7F9FC"><TR><TD BGCOLOR="#DCE4F2"><B>FAMILY_TECHNIQUE</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK, FK</B>  family_name : TEXT</TD></TR><TR><TD ALIGN="LEFT"><B>PK, FK</B>  technique_id : TEXT</TD></TR></TABLE>>, pos="4.6,7.6!"];
+FTA [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#1F3864" BGCOLOR="#F7F9FC"><TR><TD BGCOLOR="#DCE4F2"><B>FAMILY_TACTIC</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK, FK</B>  family_name : TEXT</TD></TR><TR><TD ALIGN="LEFT"><B>PK, FK</B>  tactic_name : TEXT</TD></TR></TABLE>>, pos="4.6,0.8!"];
+MT [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#1F3864" BGCOLOR="#F7F9FC"><TR><TD BGCOLOR="#DCE4F2"><B>MITRE_TECHNIQUE</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK</B>  technique_id : TEXT</TD></TR><HR/><TR><TD ALIGN="LEFT">name : TEXT</TD></TR></TABLE>>, pos="8.6,7.6!"];
+TA [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#1F3864" BGCOLOR="#F7F9FC"><TR><TD BGCOLOR="#DCE4F2"><B>MITRE_TACTIC</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK</B>  tactic_name : TEXT</TD></TR></TABLE>>, pos="8.6,0.8!"];
+BT [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#1F3864" BGCOLOR="#F7F9FC"><TR><TD BGCOLOR="#DCE4F2"><B>BEHAVIOUR_TECHNIQUE</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK, FK</B>  behaviour_name : TEXT</TD></TR><TR><TD ALIGN="LEFT"><B>PK, FK</B>  technique_id : TEXT</TD></TR></TABLE>>, pos="12.6,7.6!"];
+BTA [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#1F3864" BGCOLOR="#F7F9FC"><TR><TD BGCOLOR="#DCE4F2"><B>BEHAVIOUR_TACTIC</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK, FK</B>  behaviour_name : TEXT</TD></TR><TR><TD ALIGN="LEFT"><B>PK, FK</B>  tactic_name : TEXT</TD></TR></TABLE>>, pos="12.6,0.8!"];
+BH [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#1F3864" BGCOLOR="#F7F9FC"><TR><TD BGCOLOR="#DCE4F2"><B>BEHAVIOUR</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK</B>  name : TEXT</TD></TR><HR/><TR><TD ALIGN="LEFT">description : TEXT</TD></TR></TABLE>>, pos="12.6,4.2!"];
+MF -- DE [arrowtail=teetee, arrowhead=crowodot, label="predicted as"];
+DE -- RE [arrowtail=teeodot, arrowhead=crowodot, label="documented by"];
+MF -- FT [arrowtail=teetee, arrowhead=crowodot];
+MT -- FT [arrowtail=teetee, arrowhead=crowodot];
+MF -- FTA [arrowtail=teetee, arrowhead=crowodot];
+TA -- FTA [arrowtail=teetee, arrowhead=crowodot];
+BH -- BT [arrowtail=teetee, arrowhead=crowodot];
+MT -- BT [arrowtail=teetee, arrowhead=crowodot];
+BH -- BTA [arrowtail=teetee, arrowhead=crowodot];
+TA -- BTA [arrowtail=teetee, arrowhead=crowodot];
+}

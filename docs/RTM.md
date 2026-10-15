@@ -1,6 +1,6 @@
 # Requirement Traceability Matrix — MalTwin
 
-Generated 2026-10-15 20:06 by `scripts/generate_rtm.py` from a live test run. Each automated test case ID is an `@pytest.mark.rtm` marker on a real test in `tests/`.
+Generated 2026-10-15 20:19 by `scripts/generate_rtm.py` from a live test run. Each automated test case ID is an `@pytest.mark.rtm` marker on a real test in `tests/`.
 
 ## Requirements → automated tests
 
@@ -61,12 +61,12 @@ Generated 2026-10-15 20:06 by `scripts/generate_rtm.py` from a live test run. Ea
 | FR7.4 | The system shall evaluate fusion on paired static and dynamic evidence of the same samples. | Deferred (final evaluation) | Deferred | — | — |
 | FR-B1 | When a binary is uploaded, the system shall validate it, read its bytes and build the 2-D image. | Implemented | Test | AT-M2-01, AT-M2-02, AT-M2-08 | PASS |
 | FR-B2 | When detection is requested, the system shall load the model, preprocess the image and run a forward pass. | Implemented | Test | AT-M5-01, AT-M5-02, AT-M5-06, AT-UI-04 | PASS |
-| FR-B3 | When a detection result is available, the system shall log the event to SQLite without blocking the result. | Implemented | Test | AT-DB-01, AT-DB-05, AT-UI-04 | PASS |
-| FR-B4 | When a report is requested, the system shall compile it with the MITRE data of the predicted family. | Implemented | Test | AT-M8-03, AT-M8-04 | PASS |
+| FR-B3 | When a detection result is available, the system shall log the event to SQLite without blocking the result. | Implemented | Test | AT-DB-01, AT-DB-05, AT-DB-07, AT-DB-08, AT-UI-04 | PASS |
+| FR-B4 | When a report is requested, the system shall compile it with the MITRE data of the predicted family. | Implemented | Test | AT-DB-07, AT-M8-03, AT-M8-04 | PASS |
 | FR-B5 | When the Digital Twin is started, the system shall create the containers and the isolated network. | Deferred (final evaluation) | Deferred | — | — |
 | FR-B6 | When a heatmap is requested, the system shall compute Grad-CAM through hooks on the last convolutional layer. | Implemented | Test | AT-M7-01, AT-M7-02, AT-M7-03 | PASS |
 | REL-1 | Identical input shall give identical results (variance < 0.5% over 10 runs). | Implemented | Test | AT-M2-09, AT-M5-05 | PASS |
-| REL-2 | Corrupt or malformed files shall be handled without a crash. | Implemented | Test | AT-M2-04, AT-M2-05, AT-M2-10, AT-M7-03 | PASS |
+| REL-2 | Corrupt or malformed files shall be handled without a crash. | Implemented | Test | AT-DB-08, AT-M2-04, AT-M2-05, AT-M2-10, AT-M7-03 | PASS |
 | REL-3 | The Digital Twin shall run for at least 4 hours between failures. | Deferred (final evaluation) | Deferred | — | — |
 | REL-4 | No detection record shall be lost on an unclean shutdown (SQLite WAL). | Implemented | Test | AT-DB-02 | PASS |
 | REL-5 | Two concurrent dashboard sessions shall not interfere with each other. | Implemented | Inspection | — | — |
@@ -97,6 +97,8 @@ Generated 2026-10-15 20:06 by `scripts/generate_rtm.py` from a live test run. Ea
 | AT-DB-04 | FR1.2 | `tests/test_db.py::TestGetDetectionStats::test_total_analyzed_increments` | 1 | PASS |
 | AT-DB-05 | FR-B3 | `tests/test_db.py::TestLogDetectionEvent::test_never_raises_on_bad_confidence` | 1 | PASS |
 | AT-DB-06 | SEC-3 | `tests/test_db.py::test_database_file_permission_is_owner_only` | 1 | PASS |
+| AT-DB-07 | FR-B3, FR-B4 | `tests/test_db.py::test_report_event_references_its_detection` | 1 | PASS |
+| AT-DB-08 | FR-B3, REL-2 | `tests/test_db.py::test_foreign_key_and_check_constraints_are_enforced` | 1 | PASS |
 | AT-M10-01 | FR7.1 | `tests/test_fusion.py::TestDecisionTable::test_cases` | 6 | PASS |
 | AT-M10-02 | FR7.1 | `tests/test_fusion.py::TestValidation::test_out_of_range` | 2 | PASS |
 | AT-M10-03 | FR7.2 | `tests/test_fusion.py::TestMitreMerge::test_corroborated_first_and_tagged` | 1 | PASS |
@@ -170,8 +172,8 @@ Generated 2026-10-15 20:06 by `scripts/generate_rtm.py` from a live test run. Ea
 
 ## Summary
 
-- Automated test cases in RTM: **76** (82 executions incl. parameters)
-- Passed: **76**, failed: **0**, skipped: **0**
+- Automated test cases in RTM: **78** (84 executions incl. parameters)
+- Passed: **78**, failed: **0**, skipped: **0**
 - Requirements verified by test that are covered by at least one automated test: **57 / 57**
 - Deferred requirements (Digital Twin): FR2.1, FR2.2, FR2.3, FR2.4, FR2.5, FR2.6, FR7.4, FR-B5, REL-3, SEC-2
 - Verified by benchmark / inspection / user trial: REL-5, USE-1, USE-2, USE-4, USE-5, PER-1, PER-2, PER-3, PER-4, PER-5, PER-6, SEC-1, SEC-5

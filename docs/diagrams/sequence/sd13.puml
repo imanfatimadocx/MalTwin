@@ -1,0 +1,35 @@
+@startuml
+!include ../style.iuml
+autonumber
+actor "Security Researcher /\nSystem Administrator" as A
+boundary "Digital Twin page\n(Module 6)" as UI
+control "twin controller\n(Module 1, planned)" as TC
+participant "Docker engine" as D
+participant "Zeek" as Z
+control "Dynamic Analysis\n(Module 9)" as M9
+A -> UI : choose sample, click Start
+activate UI
+UI -> TC : start(sample)
+activate TC
+TC -> D : create internal network (no route to host)
+TC -> D : start PLC, HMI, sensor, sandbox containers
+alt Docker unavailable (UC-13 2a)
+  D --> TC : error
+  TC --> UI : missing prerequisite
+  UI --> A : "Docker is not available…"
+else started
+  TC -> Z : capture on twin bridge
+  TC -> D : run sample in sandbox (time limit)
+  opt monitor (UC-14 «extend»)
+    UI --> A : node status, traffic log, protocol chart
+  end
+  TC -> Z : stop capture
+  Z --> TC : conn.log
+  TC -> D : stop and remove containers
+  TC --> UI : conn.log path
+  deactivate TC
+  UI -> M9 : analyse capture (UC-07)
+  UI --> A : run finished, capture ready
+end
+deactivate UI
+@enduml
