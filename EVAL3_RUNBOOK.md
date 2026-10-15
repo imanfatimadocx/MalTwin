@@ -45,7 +45,9 @@ python scripts/train.py                            # full run, 30 epochs
 Time: roughly 1–2 hours on a laptop CPU, a few minutes on a GPU. Google Colab or Kaggle Notebooks (free GPU) work too: upload the repo and dataset, then run the same command.
 
 Produces in `data/processed/`:
-`eval_metrics.json`, `confusion_matrix.png`, `roc_curves.png`, `training_curves.png`, `training_history.json`, `class_names.json`, plus `models/best_model.pt`.
+`eval_metrics.json`, `balanced_eval.json`, `confusion_matrix.png`, `roc_curves.png`, `training_curves.png`, `training_history.json`, `class_names.json`, plus `models/best_model.pt`.
+
+`balanced_eval.json` holds the results on a **class-balanced test set** (same number of images from every family, 10 random draws, mean ± std) plus balanced accuracy. The committee asked for results on the balanced dataset, so this is the table to quote in the presentation (Document 4, Table 4.5). The training log prints the same numbers at the end. If you already trained before this change, you do not need to retrain: run `python scripts/evaluate.py --save-metrics` to produce it from the saved model.
 
 ### 1b. Check clean files are no longer called malware
 

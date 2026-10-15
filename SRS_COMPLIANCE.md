@@ -11,6 +11,8 @@
 
 ## Functional Requirements
 
+> **Revised catalogue (Document 4):** the authoritative requirement list is now `docs/requirements.json` — 59 FRs, 21 NFRs and 15 use cases, used to generate both Chapter 2 of the SDS and `docs/RTM.md`. The tables below are the original SRS v1.0 mapping, kept for reference.
+
 ### Mockup M1 — Main Dashboard Screen
 
 | FR-ID | Requirement | Implementation | Status |
@@ -205,6 +207,9 @@ The proposal presentation (objectives 03 *Dynamic Feature Extraction* and 04 *Hy
 | D8 | Histogram unit tests skipped (function renamed) | Feature silently untested | Tests repointed to `compute_pixel_histogram` |
 | D9 | Upload page re-processed the file on every rerun; sidebar drawn before upload handled | Detection result wiped when revisiting Upload; stale sidebar status | Skip already-processed SHA-256; refresh once after upload |
 | D10 | CNN documented as ~3.2 M parameters | Incorrect documentation | Corrected to 1,348,793 (≈1.35 M) |
+| D11 | `report_events.detection_event_id` always NULL | Reports could not be traced to detections | Detection id returned by `log_detection_event`, stored in session, enforced as a FOREIGN KEY |
+| D12 | JSON report event logged on every page render | Report counts inflated | Logged by the download button's `on_click` |
+| D13 | ROC-AUC failed for two-class evaluations | Evaluation crash on binary subsets | Two-column one-vs-rest encoding |
 
 
 ---
