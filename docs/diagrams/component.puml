@@ -1,0 +1,41 @@
+@startuml
+!include style.iuml
+skinparam componentStyle uml2
+actor "Security Analyst /\nSecurity Researcher" as user
+package "MalTwin" {
+  [Module 6: Dashboard and\nVisualization] as M6
+  package "Static analysis" {
+    [Module 2: Binary-to-Image\nConversion] as M2
+    [Module 5: Intelligent\nMalware Detection] as M5
+    [Module 7: Explainable AI\nand Interpretability] as M7
+  }
+  package "Dynamic analysis <<SRS addendum>>" {
+    [Module 9: Dynamic\nBehavioural Analysis] as M9
+    [Module 10: Hybrid\nStatic–Dynamic Fusion] as M10
+  }
+  [Module 8: Automated Threat\nReporting and Intelligence] as M8
+  [Module 1: Digital Twin\nSimulation] <<planned>> as M1
+  package "Offline training" {
+    [Module 3: Dataset Collection\nand Preprocessing] as M3
+    [Module 4: Data Enhancement\nand Balancing] as M4
+  }
+  database "SQLite\ndetection log" as DB
+  folder "Model files\n(.pt, .joblib)" as MF
+}
+() "conn.log" as CL
+user --> M6 : HTTP (localhost)
+M6 --> M2 : binary bytes
+M2 --> M5 : 128×128 image
+M5 --> M7 : model, target class
+M1 --> CL : provides
+CL --> M9 : flows
+M5 --> M10 : family, confidence
+M9 --> M10 : capture score
+M10 --> M8 : verdict
+M5 --> M8 : detection result
+M8 --> DB : log event
+M3 --> M4 : dataset splits
+M4 ..> MF : <<train>>
+MF ..> M5 : <<load>>
+MF ..> M9 : <<load>>
+@enduml

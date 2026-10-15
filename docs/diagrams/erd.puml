@@ -1,0 +1,57 @@
+@startuml
+!include style.iuml
+hide circle
+skinparam linetype ortho
+entity "DETECTION_EVENT" as DE {
+  * id : INTEGER <<PK>>
+  --
+  * timestamp : TEXT
+  * file_name : TEXT
+  * sha256 : TEXT
+  * file_format : TEXT
+  * file_size : INTEGER
+  * predicted_family : TEXT <<FK>>
+  * confidence : REAL
+  * device_used : TEXT
+}
+entity "REPORT_EVENT" as RE {
+  * id : INTEGER <<PK>>
+  --
+  * timestamp : TEXT
+  detection_event_id : INTEGER <<FK>>
+  * sha256 : TEXT
+  * report_format : TEXT
+  * gradcam_included : INTEGER
+}
+entity "MALWARE_FAMILY" as MF {
+  * name : TEXT <<PK>>
+  --
+  class_index : INTEGER
+  description : TEXT
+}
+entity "FAMILY_TECHNIQUE" as FT {
+  * family_name : TEXT <<PK, FK>>
+  * technique_id : TEXT <<PK, FK>>
+}
+entity "MITRE_TECHNIQUE" as MT {
+  * technique_id : TEXT <<PK>>
+  --
+  * name : TEXT
+  tactic : TEXT
+}
+entity "BEHAVIOUR_TECHNIQUE" as BT {
+  * behaviour_name : TEXT <<PK, FK>>
+  * technique_id : TEXT <<PK, FK>>
+}
+entity "BEHAVIOUR" as BH {
+  * name : TEXT <<PK>>
+  --
+  description : TEXT
+}
+DE |o--o{ RE : "documented by"
+MF ||--o{ DE : "predicted in"
+MF ||--o{ FT
+MT ||--o{ FT
+BH ||--o{ BT
+MT ||--o{ BT
+@enduml

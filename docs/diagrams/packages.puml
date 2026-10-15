@@ -1,0 +1,38 @@
+@startuml
+!include style.iuml
+skinparam packageStyle folder
+package "Presentation layer" as L1 {
+  [Streamlit pages] as p1
+  [Session state] as p2
+}
+package "Input & validation layer" as L2 {
+  [Upload validation] as v1
+  [Zeek conn.log parser] as v2
+}
+package "Feature representation layer" as L3 {
+  [BinaryConverter] as f1
+  [Flow feature extractor] as f2
+}
+package "Detection layer" as L4 {
+  [MalTwinCNN] as d1
+  [DynamicDetector] as d2
+}
+package "Explanation & fusion layer" as L5 {
+  [Grad-CAM] as e1
+  [Fusion rules] as e2
+}
+package "Intelligence & output layer" as L6 {
+  [MITRE mapper] as o1
+  [PDF / JSON reports] as o2
+}
+package "Persistence layer" as L7 {
+  database "SQLite" as s1
+  folder "models/, data/processed/" as s2
+}
+L1 ..> L2 : <<use>>
+L2 ..> L3 : <<use>>
+L3 ..> L4 : <<use>>
+L4 ..> L5 : <<use>>
+L5 ..> L6 : <<use>>
+L6 ..> L7 : <<use>>
+@enduml

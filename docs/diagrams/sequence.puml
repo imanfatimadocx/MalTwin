@@ -1,0 +1,41 @@
+@startuml
+!include style.iuml
+autonumber
+actor "Security Analyst" as A
+boundary "Detection page\n(Module 6)" as UI
+control "inference\n(Module 5)" as INF
+entity "MalTwinCNN" as CNN
+control "db\n(Module 8)" as DB
+database "SQLite" as SQL
+control "mitre_mapper\n(Module 8)" as MM
+A -> UI : click "Run Detection"
+activate UI
+alt model not loaded (UC-02 A1)
+  UI --> A : "No trained model is available…"
+else model loaded
+  UI -> INF : predict_single(model, image, class_names)
+  activate INF
+  INF -> INF : normalise to [-1, 1], add batch dimension
+  INF -> CNN : forward(x)
+  activate CNN
+  CNN --> INF : logits (1 × N)
+  deactivate CNN
+  INF -> INF : softmax, top-1, top-3
+  INF --> UI : family, confidence, probabilities
+  deactivate INF
+  UI -> DB : log_detection_event(sha256, family, confidence)
+  activate DB
+  DB -> SQL : INSERT … VALUES (?, ?, …)
+  alt write fails
+    DB -> SQL : retry once
+  end
+  DB --> UI : (never raises)
+  deactivate DB
+  UI -> MM : get_mitre_mapping(family)
+  activate MM
+  MM --> UI : tactics, techniques
+  deactivate MM
+  UI --> A : label, confidence bar,\nprobability chart, MITRE table
+end
+deactivate UI
+@enduml

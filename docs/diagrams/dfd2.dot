@@ -1,0 +1,12 @@
+digraph DFD2 { fontname="DejaVu Sans"; node [fontname="DejaVu Sans", fontsize=12, color="#1F3864"]; edge [fontname="DejaVu Sans", fontsize=10, color="#333333"]; bgcolor=white; rankdir=LR; nodesep=0.5; ranksep=1.0;
+ node [shape=box, style="filled,dashed", fillcolor="#FFFFFF", penwidth=1.2, margin="0.15,0.08"];
+ P2 [label="from 2.0\nClassify Binary"]; P3 [label="from 3.0\nAnalyse Behaviour"]; P5 [label="to 5.0\nProduce Report"];
+ node [shape=box, style=filled, fillcolor="#F2F2F2", penwidth=1.6, margin="0.18,0.1"]; MK [label="MITRE ATT&CK\nfor ICS knowledge base"];
+ node [shape=circle, style=filled, fillcolor="#DCE4F2", penwidth=1.6, fixedsize=true, width=1.45, width=1.5];
+ Q1 [label="4.1\nCompute\nFused Score"]; Q2 [label="4.2\nDetermine\nAgreement\nCategory"]; Q3 [label="4.3\nAssign\nVerdict"]; Q4 [label="4.4\nMerge MITRE\nTechniques"];
+ P2 -> Q1 [label="confidence"]; P3 -> Q1 [label="capture score"];
+ P2 -> Q2 [label="confidence"]; P3 -> Q2 [label="capture score"];
+ Q1 -> Q3 [label="fused score"]; Q2 -> Q3 [label="category"];
+ P2 -> Q4 [label="family"]; P3 -> Q4 [label="behaviours"]; MK -> Q4 [label="tactics & techniques"];
+ Q3 -> P5 [label="fusion result\n(verdict, category)"]; Q4 -> P5 [label="fusion result\n(techniques)"];
+}

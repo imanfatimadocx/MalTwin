@@ -1,0 +1,11 @@
+digraph DFD0 { fontname="DejaVu Sans"; node [fontname="DejaVu Sans", fontsize=12, color="#1F3864"]; edge [fontname="DejaVu Sans", fontsize=10, color="#333333"]; bgcolor=white; rankdir=LR; nodesep=0.55; ranksep=1.3;
+ node [shape=box, style=filled, fillcolor="#F2F2F2", penwidth=1.6, margin="0.18,0.1"];
+ SA [label="Security\nAnalyst"]; SR [label="Security\nResearcher"]; DS [label="Public Datasets\n(Malimg, IoT-23)"];
+ DT [label="Digital Twin\n(planned)"]; MK [label="MITRE ATT&CK\nfor ICS knowledge base"];
+ P0 [shape=circle, style=filled, fillcolor="#DCE4F2", penwidth=1.6, fixedsize=true, width=1.45, width=2.0, label="0\nMalTwin\nSystem"];
+ SA -> P0 [label="binary file"]; SA -> P0 [label="network capture"]; SA -> P0 [label="report request"];
+ P0 -> SA [label="verdict, explanation,\nreport, statistics"];
+ SR -> P0 [label="training request"]; P0 -> SR [label="evaluation metrics"];
+ DS -> P0 [label="labelled samples"]; DT -> P0 [label="traffic capture"]; MK -> P0 [label="tactics & techniques"];
+ {rank=same; SA; SR;} {rank=same; DS; DT; MK;}
+}
