@@ -183,7 +183,7 @@ def main():
         serialisable['per_class'] = {
             family: dict(stats) for family, stats in metrics['per_class'].items()
         }
-        with open(metrics_path, 'w') as f:
+        with open(metrics_path, 'w', encoding='utf-8') as f:
             json.dump(serialisable, f, indent=2)
         print(f"  Eval metrics → {metrics_path}")
     except Exception as e:
@@ -206,7 +206,7 @@ def main():
                             config.ROC_CURVE_PATH)
             print(f"  ROC curves → {config.ROC_CURVE_PATH}")
         plot_training_curves(history, config.TRAINING_CURVES_PATH)
-        with open(config.TRAINING_HISTORY_PATH, 'w') as f:
+        with open(config.TRAINING_HISTORY_PATH, 'w', encoding='utf-8') as f:
             json.dump({k: v for k, v in history.items()}, f, indent=2, default=float)
         print(f"  Training curves → {config.TRAINING_CURVES_PATH}")
     except Exception as e:
@@ -218,7 +218,7 @@ def main():
         from modules.detection.balanced_eval import evaluate_balanced, format_balanced_table
         if len(metrics['y_true']):
             bal = evaluate_balanced(metrics['y_true'], metrics['y_prob'], class_names)
-            with open(config.BALANCED_EVAL_PATH, 'w') as f:
+            with open(config.BALANCED_EVAL_PATH, 'w', encoding='utf-8') as f:
                 json.dump(bal, f, indent=2)
             print(format_balanced_table(bal))
             print(f"  Balanced evaluation → {config.BALANCED_EVAL_PATH}")

@@ -30,7 +30,7 @@ def load_mitre_db(path: Path = config.MITRE_JSON_PATH) -> dict:
     Returns empty dict on FileNotFoundError or parse error.
     """
     try:
-        with open(path, 'r') as f:
+        with open(path, 'r', encoding='utf-8') as f:
             return json.load(f)
     except FileNotFoundError:
         print(f"[MalTwin] MITRE mapping file not found: {path}", file=sys.stderr)

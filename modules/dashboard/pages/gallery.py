@@ -20,6 +20,12 @@ import config
 from modules.dashboard.theme import image_full_width
 
 
+def _png_files(family_dir: Path) -> list[Path]:
+    """PNG files in a folder, matched case-insensitively and listed once.
+    (glob('*.png') + glob('*.PNG') returns every file twice on Windows.)"""
+    return sorted(p for p in family_dir.iterdir() if p.is_file() and p.suffix.lower() == '.png')
+
+
 @st.cache_data(ttl=300, show_spinner=False)
 def _load_family_names(data_dir: str) -> list[str]:
     """
@@ -50,8 +56,7 @@ def _load_sample_images(
     if not family_dir.exists():
         return []
 
-    png_files = sorted(list(family_dir.glob('*.png')) + list(family_dir.glob('*.PNG')))
-    png_files = png_files[:max_images]
+    png_files = _png_files(family_dir)[:max_images]
 
     images = []
     for path in png_files:
@@ -69,7 +74,7 @@ def _count_family_images(data_dir: str, family_name: str) -> int:
     family_dir = Path(data_dir) / family_name
     if not family_dir.exists():
         return 0
-    return len(list(family_dir.glob('*.png')) + list(family_dir.glob('*.PNG')))
+    return len(_png_files(family_dir))
 
 
 def render():

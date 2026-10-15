@@ -90,7 +90,7 @@ def sha256_file(path: Path) -> str:
 def load_manifest_hashes(manifest: Path) -> set[str]:
     if not Path(manifest).exists():
         return set()
-    with open(manifest, newline='') as f:
+    with open(manifest, newline='', encoding='utf-8') as f:
         return {row['sha256'] for row in csv.DictReader(f)}
 
 
@@ -140,7 +140,7 @@ def build_benign_class(
             continue
         rows.append({'sha256': digest, 'name': path.name, 'format': fmt, 'size': len(data)})
 
-    with open(out_dir / 'manifest.csv', 'w', newline='') as f:
+    with open(out_dir / 'manifest.csv', 'w', newline='', encoding='utf-8') as f:
         w = csv.DictWriter(f, fieldnames=['sha256', 'name', 'format', 'size'])
         w.writeheader()
         w.writerows(rows)

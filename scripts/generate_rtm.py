@@ -35,7 +35,7 @@ CATALOGUE = ROOT / "docs" / "requirements.json"
 
 def load_reqs() -> list[tuple[str, str, str, str]]:
     """(id, text, status, verification) for every FR and NFR."""
-    cat = json.loads(CATALOGUE.read_text())
+    cat = json.loads(CATALOGUE.read_text(encoding='utf-8'))
     reqs = [(r["id"], r["text"], r["status"], "Deferred" if r["status"].startswith("Deferred") else "Test")
             for r in cat["functional"]]
     reqs += [(r["id"], r["text"], r["status"], r["verification"]) for r in cat["nonfunctional"]]
@@ -59,7 +59,7 @@ def main():
     a = ap.parse_args()
     if not a.no_run:
         run_tests()
-    rows = json.loads(RESULTS.read_text())
+    rows = json.loads(RESULTS.read_text(encoding='utf-8'))
 
     # collapse parametrised cases (same test ID) into one row
     by_tc: dict[str, dict] = {}
@@ -116,9 +116,9 @@ def main():
               f"- Verified by benchmark / inspection / user trial: {', '.join(r[0] for r in REQS if r[3] not in ('Test', 'Deferred'))}"]
     if unknown:
         lines.append(f"- WARNING: tests reference unknown requirement IDs: {unknown}")
-    (ROOT / "docs" / "RTM.md").write_text("\n".join(lines) + "\n")
+    (ROOT / "docs" / "RTM.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-    with open(ROOT / "docs" / "rtm.csv", "w", newline="") as f:
+    with open(ROOT / "docs" / "rtm.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["requirement", "description", "status", "verification", "test_ids", "result"])
         for rid, desc, status, verif in REQS:

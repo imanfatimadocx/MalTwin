@@ -47,7 +47,7 @@ def pytest_runtest_makereport(item, call):
 def pytest_sessionfinish(session, exitstatus):
     out = os.environ.get("MALTWIN_RTM_OUT")
     if out:
-        with open(out, "w") as f:
+        with open(out, "w", encoding="utf-8") as f:
             json.dump(_RTM_ROWS, f, indent=2)
 
 

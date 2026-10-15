@@ -202,7 +202,7 @@ def _check_module8_reporting() -> dict:
                 'emoji':  '⚠️',
             }
         import json
-        with open(config.MITRE_JSON_PATH) as f:
+        with open(config.MITRE_JSON_PATH, encoding='utf-8') as f:
             db = json.load(f)
         n = len(db)
         return {
@@ -231,7 +231,7 @@ def _check_module9_dynamic() -> dict:
         source = 'unknown'
         try:
             import json
-            with open(config.DYNAMIC_METRICS_PATH) as f:
+            with open(config.DYNAMIC_METRICS_PATH, encoding='utf-8') as f:
                 source = json.load(f).get('metadata', {}).get('data_source', 'unknown')
         except Exception:
             pass

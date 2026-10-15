@@ -63,7 +63,7 @@ def main():
     res = evaluate_on_benign(model, names, chosen)
     res.update({'sources': a.src, 'skipped_training_files': skipped})
     out = config.PROCESSED_DIR / 'benign_eval.json'
-    with open(out, 'w') as f:
+    with open(out, 'w', encoding='utf-8') as f:
         json.dump(res, f, indent=2)
 
     print(f"\nClean files tested:           {res['n_files']}")

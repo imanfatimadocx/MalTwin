@@ -6,13 +6,17 @@ Everything you need to run before Sunday 18 October (document deadline) and for 
 
 ## 0. Setup (once, ~15 min)
 
+> **Already have an older clone?** Get this branch into it without re-cloning:
+> `git fetch https://github.com/imanfatimadocx/MalTwin.git feature/eval3-60pct:feature/eval3-60pct` then `git checkout feature/eval3-60pct`.
+> On Windows, if `train.py` hangs at start or shows `BrokenPipeError`, add `--workers 0`.
+
 ```bash
 git clone https://github.com/imanfatimadocx/MalTwin.git
 cd MalTwin
 git checkout feature/eval3-60pct        # until the PR is merged
-python3.11 -m venv venv && source venv/bin/activate      # Windows: venv\Scripts\activate
+python3.11 -m venv venv && source venv/bin/activate      # Windows PowerShell: py -3.11 -m venv venv; .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-cp .env.example .env
+cp .env.example .env                    # Windows PowerShell: Copy-Item .env.example .env
 pytest tests/ -m "not integration" -q   # expect: all passed, a few skipped
 ```
 

@@ -43,7 +43,7 @@ def fake_train_script(tmp_path) -> Path:
         print("[6/6] Saving outputs...", flush=True)
         print("Done!", flush=True)
         sys.exit(0)
-    """))
+    """), encoding="utf-8")
     return script
 
 
@@ -55,7 +55,7 @@ def fail_train_script(tmp_path) -> Path:
         import sys
         print('ERROR: Dataset not found', flush=True)
         sys.exit(1)
-    """))
+    """), encoding="utf-8")
     return script
 
 
@@ -172,7 +172,7 @@ class TestTrainingJobLifecycle:
     @pytest.mark.rtm("AT-M5-15", "FR4.9")
     def test_stop_sets_status_stopped(self, tmp_path, monkeypatch):
         script = tmp_path / "sleep.py"
-        script.write_text("import time; time.sleep(30)")
+        script.write_text("import time; time.sleep(30)", encoding="utf-8")
         job = TrainingJob()
         self._patch_cmd(job, script, monkeypatch)
         job.start({})

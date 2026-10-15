@@ -103,3 +103,12 @@ MALIMG_EXPECTED_FAMILIES = 25
 # Name of the optional clean-software class added with scripts/build_benign_class.py
 BENIGN_CLASS_NAME = os.getenv("MALTWIN_BENIGN_CLASS", "Benign")
 MALIMG_TOTAL_SAMPLES     = 9339
+
+# Never crash on console output: Windows consoles and redirected output may use a
+# code page that cannot print characters such as ★ → ± used in progress messages.
+import sys as _sys
+for _stream in (_sys.stdout, _sys.stderr):
+    try:
+        _stream.reconfigure(errors="replace")
+    except (AttributeError, ValueError):
+        pass

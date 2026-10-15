@@ -104,7 +104,7 @@ class TestCheckModule5Detection:
         names_path = tmp_path / 'class_names.json'
         model      = MalTwinCNN(num_classes=25)
         torch.save(model.state_dict(), pt_path)
-        names_path.write_text(json.dumps({'class_names': [f'F{i}' for i in range(25)]}))
+        names_path.write_text(json.dumps({'class_names': [f'F{i}' for i in range(25)]}), encoding='utf-8')
         monkeypatch.setattr(config, 'BEST_MODEL_PATH', pt_path)
         monkeypatch.setattr(config, 'CLASS_NAMES_PATH', names_path)
         from modules.dashboard import health
@@ -158,7 +158,7 @@ class TestCheckModule8Reporting:
         mitre_path = tmp_path / 'mitre.json'
         # Write all 25 families
         db = {f'Family_{i}': {'tactics': [], 'techniques': [], 'description': ''} for i in range(25)}
-        mitre_path.write_text(json.dumps(db))
+        mitre_path.write_text(json.dumps(db), encoding='utf-8')
         monkeypatch.setattr(config, 'MITRE_JSON_PATH', mitre_path)
         from modules.dashboard import health
         import importlib; importlib.reload(health)

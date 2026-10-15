@@ -16,6 +16,7 @@ TrainingJob — manages one training subprocess lifecycle
     .stop()        → terminates subprocess gracefully
     .is_running()  → bool
 """
+import os
 import subprocess
 import sys
 from dataclasses import dataclass, field
@@ -104,11 +105,17 @@ class TrainingJob:
 
         cmd = self._build_cmd(args)
 
+        # UTF-8 both ways: on Windows a piped child process otherwise writes
+        # cp1252 and crashes on characters such as ★ in the training log.
+        env = dict(os.environ, PYTHONIOENCODING='utf-8')
         self._process = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
+            encoding='utf-8',
+            errors='replace',
+            env=env,
             bufsize=1,               # text-mode buffering; reader thread pulls line-by-line
         )
 

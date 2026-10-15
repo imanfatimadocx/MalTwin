@@ -73,7 +73,7 @@ class DynamicReport:
 
 def load_behaviour_mitre(path: Path) -> dict:
     try:
-        with open(path) as f:
+        with open(path, encoding='utf-8') as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         return {}

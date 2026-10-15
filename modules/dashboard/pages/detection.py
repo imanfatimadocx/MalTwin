@@ -496,7 +496,7 @@ def _render_mitre_mapping(predicted_family: str) -> None:
     Uses st.info (not st.error) when mapping is unavailable — never crashes the page.
     """
     try:
-        with open(config.MITRE_JSON_PATH, 'r') as f:
+        with open(config.MITRE_JSON_PATH, 'r', encoding='utf-8') as f:
             mitre_db = json.load(f)
     except FileNotFoundError:
         st.info(

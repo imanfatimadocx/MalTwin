@@ -127,7 +127,7 @@ def main():
         'seed':                args.seed,
     })
 
-    with open(config.UNSEEN_EVAL_PATH, 'w') as f:
+    with open(config.UNSEEN_EVAL_PATH, 'w', encoding='utf-8') as f:
         json.dump(result, f, indent=2)
     hist_path = config.PROCESSED_DIR / 'unseen_confidence_hist.png'
     plot_confidence_histogram(k_conf, u_conf, hist_path,

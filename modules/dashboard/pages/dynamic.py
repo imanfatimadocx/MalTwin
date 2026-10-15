@@ -43,7 +43,7 @@ def _load_detector():
 
 def _load_metrics() -> dict:
     try:
-        with open(config.DYNAMIC_METRICS_PATH) as f:
+        with open(config.DYNAMIC_METRICS_PATH, encoding='utf-8') as f:
             return json.load(f)
     except Exception:
         return {}

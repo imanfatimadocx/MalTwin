@@ -15,6 +15,8 @@ import sqlite3
 import time
 from pathlib import Path
 
+import sys
+
 import pytest
 
 
@@ -279,6 +281,7 @@ class TestLogReportEvent:
         log_report_event(bad_path, None, 'a' * 64, 'JSON', False)
 
 @pytest.mark.rtm("AT-DB-06", "SEC-3")
+@pytest.mark.skipif(sys.platform == "win32", reason="POSIX file modes; Windows uses NTFS ACLs")
 @pytest.mark.skipif(__import__("os").name == "nt", reason="POSIX file permissions only")
 def test_database_file_permission_is_owner_only(tmp_path):
     """SEC-3: the SQLite log is created with permission 600 (owner read/write)."""

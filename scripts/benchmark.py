@@ -139,7 +139,7 @@ def main():
     res['verdicts']['REL-1'] = 'PASS' if res['REL-1_inference_max_abs_diff_10_runs'] < 0.005 else 'FAIL'
 
     out = config.PROCESSED_DIR / 'performance.json'
-    with open(out, 'w') as f:
+    with open(out, 'w', encoding='utf-8') as f:
         json.dump(res, f, indent=2)
     for k, v in res.items():
         if isinstance(v, dict) and 'mean_s' in v:

@@ -5,7 +5,7 @@ captum==0.7.0
 
 # Image Processing
 opencv-python-headless==4.10.0.84
-Pillow==12.2.0
+Pillow==10.4.0        # streamlit 1.37 requires pillow<11
 numpy==1.26.4
 
 # Data / ML utilities

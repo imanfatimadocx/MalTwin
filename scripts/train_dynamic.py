@@ -164,7 +164,7 @@ def main():
     importance = det.feature_importance()
     out = {k: v for k, v in m.items() if k != 'classification_report'}
     out.update({'metadata': meta, 'feature_importance': importance[:20]})
-    with open(config.DYNAMIC_METRICS_PATH, 'w') as f:
+    with open(config.DYNAMIC_METRICS_PATH, 'w', encoding='utf-8') as f:
         json.dump(out, f, indent=2)
     _plot_cm(m['confusion_matrix'], m['labels'], config.DYNAMIC_CM_PATH)
     _plot_importance(importance, config.DYNAMIC_IMPORTANCE_PATH)

@@ -243,7 +243,7 @@ def get_detection_stats(db_path: Path) -> dict:
         acc = None
         metrics_path = config.PROCESSED_DIR / 'eval_metrics.json'
         if metrics_path.exists():
-            with open(metrics_path) as f:
+            with open(metrics_path, encoding='utf-8') as f:
                 acc = json.load(f).get('accuracy')
         return {
             'total_analyzed': total,
