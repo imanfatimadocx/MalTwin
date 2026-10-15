@@ -18,3 +18,4 @@ data/iot23/
 models/dynamic_model.joblib
 models/openset/
 data/processed/*.joblib
+docs/rtm_results.json

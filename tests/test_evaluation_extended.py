@@ -31,6 +31,7 @@ class TestExtendedMetrics:
         assert m['mcc'] == pytest.approx(1.0)
         assert m['top3_accuracy'] is None or m['top3_accuracy'] == pytest.approx(1.0)
 
+    @pytest.mark.rtm("AT-M5-07", "M5-FE3")
     def test_per_class_fpr_matches_hand_calculation(self):
         # true: A A B B C C ; pred: A B B B C A
         y_true = np.array([0, 0, 1, 1, 2, 2])
@@ -86,6 +87,7 @@ class TestOpenSet:
         with pytest.raises(ValueError):
             select_holdout_families([f'F{i}' for i in range(10)], n)
 
+    @pytest.mark.rtm("AT-M5-08", "M5-FE3")
     def test_perfect_separation(self):
         m = openset_metrics(np.array([0.95, 0.9, 0.99]), np.array([0.2, 0.3, 0.4]))
         assert m['auroc_known_vs_unknown'] == pytest.approx(1.0)

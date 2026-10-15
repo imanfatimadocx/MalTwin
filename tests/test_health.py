@@ -197,6 +197,7 @@ class TestGetAllModuleStatuses:
             assert r['status'] in ('active', 'inactive', 'error'), \
                 f"Module {r['id']} has invalid status: {r['status']}"
 
+    @pytest.mark.rtm("AT-M6-01", "FR1.1")
     def test_module_ids_are_m1_through_m10(self):
         from modules.dashboard.health import get_all_module_statuses
         get_all_module_statuses.clear()
@@ -204,6 +205,7 @@ class TestGetAllModuleStatuses:
         ids = [r['id'] for r in results]
         assert ids == ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10']
 
+    @pytest.mark.rtm("AT-M6-02", "FR1.1")
     def test_does_not_raise(self):
         """get_all_module_statuses must never raise regardless of environment."""
         from modules.dashboard.health import get_all_module_statuses

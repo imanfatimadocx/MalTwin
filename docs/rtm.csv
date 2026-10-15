@@ -1,0 +1,52 @@
+requirement,description,status,test_ids,result
+FR1.1,Dashboard shows operational status of all modules,Implemented,AT-M6-01 AT-M6-02 AT-UI-02,PASS
+FR1.2,Cumulative detection statistics (analysed / malware / benign),Implemented,AT-DB-04 AT-M5-11 AT-UI-02 AT-UI-06,PASS
+FR1.3,Persistent sidebar navigation between all screens,Implemented,AT-UI-01,PASS
+FR1.4,Feed of the most recent detection events,Implemented,AT-DB-03 AT-UI-06,PASS
+FR2.1,Start/stop Digital Twin simulation,Deferred (final evaluation),,
+FR2.2,Live Digital Twin traffic log,Deferred (final evaluation),,
+FR2.3,Digital Twin node status panel,Deferred (final evaluation),,
+FR2.4,Protocol traffic pie chart,Deferred (final evaluation),,
+FR3.1,"Upload PE/ELF binary (max 50 MB, magic-byte validation)",Implemented,AT-M2-03 AT-M2-04,PASS
+FR3.2,Convert binary to grayscale image,Implemented,AT-M2-01 AT-M2-02,PASS
+FR3.3,Show metadata incl. SHA-256,Implemented,AT-M2-06,PASS
+FR3.4,Pixel intensity histogram (256 bins),Implemented,AT-M2-07,PASS
+FR5.1,Run detection model on uploaded binary,Implemented,AT-M5-02 AT-UI-03 AT-UI-04,PASS
+FR5.2,Top-1 label with colour-coded confidence,Implemented,AT-M5-03 AT-UI-04,PASS
+FR5.3,Per-class probability chart,Implemented,AT-UI-04,PASS
+FR5.4,Grad-CAM heatmap on request,Implemented,AT-M7-01,PASS
+FR5.5,MITRE ATT&CK for ICS mapping,Implemented,AT-M8-01 AT-M8-02 AT-UI-04,PASS
+FR5.6,PDF / JSON forensic report download,Implemented,AT-M8-03 AT-M8-04 AT-M8-05 AT-UI-05,PASS
+FR-B1,"Backend: validate, read bytes, build 2-D image",Implemented,AT-M2-01 AT-M2-02 AT-M2-08,PASS
+FR-B2,"Backend: load model, preprocess, forward pass",Implemented,AT-M5-01 AT-M5-02 AT-M5-06 AT-UI-04,PASS
+FR-B3,Backend: log detection event to SQLite,Implemented,AT-DB-01 AT-DB-05 AT-UI-04,PASS
+FR-B4,Backend: compile report with MITRE data,Implemented,AT-M8-03 AT-M8-04,PASS
+FR-B5,Backend: start Digital Twin,Deferred (final evaluation),,
+FR-B6,Backend: Grad-CAM hooks on last conv layer,Implemented,AT-M7-01 AT-M7-02 AT-M7-03,PASS
+REL-1,Identical results for identical input,Implemented,AT-M2-09 AT-M5-05,PASS
+REL-2,Corrupt/malformed files handled without crash,Implemented,AT-M2-04 AT-M2-05 AT-M2-10 AT-M7-03,PASS
+REL-4,No detection records lost (WAL),Implemented,AT-DB-02,PASS
+SEC-3,Database file permission 600,Implemented,AT-DB-06,PASS
+SEC-4,SHA-256 computed locally,Implemented,AT-M2-06,PASS
+USE-3,"Errors state what, cause and action",Implemented,AT-UI-03 AT-UI-07,PASS
+M3-FE2,Label encoding,Implemented,AT-M3-02,PASS
+M3-FE3,Stratified train/val/test split,Implemented,AT-M3-01,PASS
+M3-FE4,Dataset integrity validation,Implemented,AT-M3-03,PASS
+M4-FE1,"Augmentation (rotation, flip, brightness)",Implemented,AT-M4-01,PASS
+M4-FE2,Gaussian noise injection,Implemented,AT-M4-02,PASS
+M4-FE3,Class-aware oversampling,Implemented,AT-M4-03 AT-M4-04,PASS
+M5-FE2,Configurable CNN training,Implemented,AT-M5-04,PASS
+M5-FE3,"Evaluation metrics incl. ROC-AUC, FPR, unseen-family",Implemented,AT-M5-07 AT-M5-08,PASS
+M5-FE5,Model serialisation,Implemented,AT-M5-05,PASS
+M5-BEN,Benign class and benign false-positive evaluation,Implemented,AT-M5-09 AT-M5-10 AT-M5-11,PASS
+M9-1,Parse Zeek / IoT-23 conn.log,Implemented,AT-M9-01 AT-M9-02,PASS
+M9-2,IP-free behavioural flow features,Implemented,AT-M9-03,PASS
+M9-3,Behaviour classification model,Implemented,AT-M9-04 AT-M9-07,PASS
+M9-4,Capture-level verdict,Implemented,AT-M9-05 AT-M9-06,PASS
+M9-5,Feature-importance explanation,Implemented,AT-M9-05,PASS
+M9-6,MITRE ATT&CK for ICS per behaviour,Implemented,AT-M9-05,PASS
+M9-7,Dynamic Analysis dashboard page,Implemented,AT-UI-07,PASS
+M10-1,Decision-level fusion with agreement categories,Implemented,AT-M10-01 AT-M10-02,PASS
+M10-2,Combined MITRE mapping tagged by source,Implemented,AT-M10-03,PASS
+M10-3,Hybrid Verdict page and what-if simulator,Implemented,AT-UI-08,PASS
+M1-DESIGN,Digital Twin design page and prerequisite checks,Implemented (design only),AT-UI-09,PASS

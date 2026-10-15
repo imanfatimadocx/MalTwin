@@ -53,6 +53,7 @@ def dummy_checkpoint(tmp_path, cnn):
 
 class TestForwardPassShape:
 
+    @pytest.mark.rtm("AT-M5-01", "FR-B2")
     def test_output_shape_batch2(self, cnn, dummy_input):
         with torch.no_grad():
             out = cnn(dummy_input)
@@ -122,6 +123,7 @@ class TestArchitectureStructure:
 
 class TestTrainingBehaviour:
 
+    @pytest.mark.rtm("AT-M5-04", "M5-FE2")
     def test_loss_decreases_on_overfit_single_batch(self, detection_mod):
         # Seeded and with dropout disabled so the check is deterministic:
         # the test asks "can the network fit one batch?", not "does it
@@ -183,6 +185,7 @@ class TestInferenceHelpers:
         result = inference.predict_single(net, img_array, class_names, device="cpu")
         assert isinstance(result, dict), f"Expected dict, got {type(result)}"
 
+    @pytest.mark.rtm("AT-M5-02", "FR5.1", "FR-B2")
     def test_predict_single_has_required_keys(self, detection_mod, dummy_checkpoint):
         _, inference = detection_mod
         img_array = np.random.randint(0, 256, (128, 128), dtype=np.uint8)
@@ -194,6 +197,7 @@ class TestInferenceHelpers:
         assert "probabilities" in result
         assert "top3" in result
 
+    @pytest.mark.rtm("AT-M5-03", "FR5.2")
     def test_predict_confidence_in_zero_one(self, detection_mod, dummy_checkpoint):
         _, inference = detection_mod
         img_array = np.random.randint(0, 256, (128, 128), dtype=np.uint8)
@@ -265,6 +269,7 @@ class TestLoadModel:
         loaded_w = loaded.block1.conv1.weight.data
         torch.testing.assert_close(orig_w, loaded_w)
 
+    @pytest.mark.rtm("AT-M5-06", "FR-B2")
     def test_load_model_raises_helpful_error_for_unknown_checkpoint_keys(self, tmp_path, num_classes):
         """
         A checkpoint dict with none of the known keys should raise ValueError
@@ -284,6 +289,7 @@ class TestLoadModel:
 
 class TestModelSerialization:
 
+    @pytest.mark.rtm("AT-M5-05", "M5-FE5", "REL-1")
     def test_save_and_reload_same_output(self, cnn, dummy_input, tmp_path):
         path = tmp_path / "checkpoint.pt"
         torch.save(cnn.state_dict(), path)

@@ -59,6 +59,7 @@ class TestParser:
             list(flows['behaviour'].value_counts().sort_index())
         assert df['orig_bytes'].dtype.kind in 'if'
 
+    @pytest.mark.rtm("AT-M9-01", "M9-1")
     def test_iot23_space_separated_tail(self):
         text = (
             "#separator \\x09\n#path\tconn\n"
@@ -85,6 +86,7 @@ class TestParser:
         write_conn_log(flows.drop(columns=['behaviour']), p)
         assert len(parse_conn_log(p, max_rows=100)) == 100
 
+    @pytest.mark.rtm("AT-M9-02", "M9-1")
     def test_empty_file_raises(self):
         with pytest.raises(ValueError):
             parse_conn_log(b"#fields\tts\n")
@@ -104,6 +106,7 @@ class TestFeatures:
         assert len(X) == len(flows)
         assert not X.isna().any().any()
 
+    @pytest.mark.rtm("AT-M9-03", "M9-2")
     def test_no_ip_features(self):
         assert not any('orig_h' in f or 'resp_h' in f for f in feature_names())
 
@@ -117,6 +120,7 @@ class TestFeatures:
 
 
 class TestDetector:
+    @pytest.mark.rtm("AT-M9-07", "M9-3")
     def test_untrained_raises(self, flows):
         with pytest.raises(RuntimeError):
             DynamicDetector().predict_proba_df(flows)
@@ -126,6 +130,7 @@ class TestDetector:
         with pytest.raises(ValueError):
             DynamicDetector(n_estimators=5).fit(benign)
 
+    @pytest.mark.rtm("AT-M9-04", "M9-3")
     def test_learns_synthetic_behaviours(self, trained):
         test = generate_flows({'Benign': 200, 'PortScan': 50, 'DDoS': 30}, seed=99)
         test['behaviour'] = [map_behaviour(a, b) for a, b in zip(test['label'], test['detailed-label'])]
@@ -134,12 +139,14 @@ class TestDetector:
         assert m['binary']['false_positive_rate'] < 0.05
         assert m['binary']['detection_rate'] > 0.9
 
+    @pytest.mark.rtm("AT-M9-06", "M9-4")
     def test_benign_capture_verdict(self, trained):
         rep = trained.analyse_capture(generate_flows({'Benign': 200}, seed=11))
         assert rep.verdict == 'BENIGN'
         assert rep.capture_score < 0.5
         assert rep.behaviour_profile == {}
 
+    @pytest.mark.rtm("AT-M9-05", "M9-4", "M9-5", "M9-6")
     def test_malicious_capture_verdict_and_mitre(self, trained):
         cap = generate_flows({'Benign': 200, 'PortScan': 40}, seed=12)
         db = load_behaviour_mitre(config.MITRE_BEHAVIOUR_JSON_PATH)

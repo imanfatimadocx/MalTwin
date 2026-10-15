@@ -66,6 +66,7 @@ class TestInitDb:
         con.close()
         assert "detection_events" in tables
 
+    @pytest.mark.rtm("AT-DB-02", "REL-4")
     def test_wal_mode_enabled(self, db_mod, tmp_path):
         db_path = tmp_path / "wal_test.db"
         db_mod.init_db(db_path)
@@ -112,6 +113,7 @@ class TestLogDetectionEvent:
         con.close()
         assert count == 5
 
+    @pytest.mark.rtm("AT-DB-01", "FR-B3")
     def test_stored_sha256_matches(self, db_mod, tmp_db):
         sha = "c" * 64
         _log(db_mod, tmp_db, sha256=sha)
@@ -136,6 +138,7 @@ class TestLogDetectionEvent:
         con.close()
         assert row[0] == "Yuner.A"
 
+    @pytest.mark.rtm("AT-DB-05", "FR-B3")
     def test_never_raises_on_bad_confidence(self, db_mod, tmp_db):
         """log_detection_event must not raise — it retries silently."""
         try:
@@ -160,6 +163,7 @@ class TestGetRecentEvents:
         results = db_mod.get_recent_events(tmp_db)
         assert len(results) == 1
 
+    @pytest.mark.rtm("AT-DB-03", "FR1.4")
     def test_limit_parameter(self, db_mod, tmp_db):
         for i in range(10):
             _log(db_mod, tmp_db, sha256="d" * 63 + str(i))
@@ -203,6 +207,7 @@ class TestGetDetectionStats:
         for key in ("total_analyzed", "total_malware", "total_benign"):
             assert key in result, f"Missing key: {key}"
 
+    @pytest.mark.rtm("AT-DB-04", "FR1.2")
     def test_total_analyzed_increments(self, db_mod, tmp_db):
         before = db_mod.get_detection_stats(tmp_db)["total_analyzed"]
         _log(db_mod, tmp_db)
@@ -271,3 +276,13 @@ class TestLogReportEvent:
         from modules.dashboard.db import log_report_event
         bad_path = tmp_path / "nonexistent_dir" / "db.db"
         log_report_event(bad_path, None, 'a' * 64, 'JSON', False)
+
+@pytest.mark.rtm("AT-DB-06", "SEC-3")
+@pytest.mark.skipif(__import__("os").name == "nt", reason="POSIX file permissions only")
+def test_database_file_permission_is_owner_only(tmp_path):
+    """SEC-3: the SQLite log is created with permission 600 (owner read/write)."""
+    import os, stat
+    from modules.dashboard.db import init_db
+    db = tmp_path / "perm.db"
+    init_db(db)
+    assert stat.S_IMODE(os.stat(db).st_mode) == 0o600

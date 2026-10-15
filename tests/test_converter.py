@@ -45,12 +45,14 @@ def converter_mod():
 
 class TestBinaryConverterOutputShape:
 
+    @pytest.mark.rtm("AT-M2-01", "FR-B1", "FR3.2")
     def test_pe_returns_128x128(self, converter_mod):
         converter, _ = converter_mod
         bc = converter.BinaryConverter()
         arr = bc.convert(_make_pe_bytes())
         assert arr.shape == (128, 128), f"Expected (128,128), got {arr.shape}"
 
+    @pytest.mark.rtm("AT-M2-02", "FR-B1", "FR3.2")
     def test_elf_returns_128x128(self, converter_mod):
         converter, _ = converter_mod
         bc = converter.BinaryConverter()
@@ -76,6 +78,7 @@ class TestBinaryConverterOutputShape:
 
 class TestBinaryConverterDeterminism:
 
+    @pytest.mark.rtm("AT-M2-09", "REL-1")
     def test_same_bytes_same_output(self, converter_mod):
         converter, _ = converter_mod
         bc = converter.BinaryConverter()
@@ -101,6 +104,7 @@ class TestBinaryConverterDeterminism:
 
 class TestValidateBinaryFormat:
 
+    @pytest.mark.rtm("AT-M2-03", "FR3.1")
     def test_accepts_pe(self, converter_mod):
         _, utils = converter_mod
         result = utils.validate_binary_format(_make_pe_bytes())
@@ -111,11 +115,13 @@ class TestValidateBinaryFormat:
         result = utils.validate_binary_format(_make_elf_bytes())
         assert result in ("ELF", "elf", True, "valid")
 
+    @pytest.mark.rtm("AT-M2-04", "FR3.1", "REL-2")
     def test_rejects_invalid(self, converter_mod):
         _, utils = converter_mod
         with pytest.raises(Exception):
             utils.validate_binary_format(_make_invalid_bytes())
 
+    @pytest.mark.rtm("AT-M2-05", "REL-2")
     def test_rejects_empty_bytes(self, converter_mod):
         _, utils = converter_mod
         with pytest.raises(Exception):
@@ -134,6 +140,7 @@ class TestComputeSha256:
         assert len(digest) == 64
         assert all(c in "0123456789abcdefABCDEF" for c in digest)
 
+    @pytest.mark.rtm("AT-M2-06", "FR3.3", "SEC-4")
     def test_matches_reference_hash(self, converter_mod):
         _, utils = converter_mod
         content = b"MZ" + b"\x00" * 62
@@ -178,6 +185,7 @@ class TestHistogram:
         result = utils.compute_pixel_histogram(arr)
         assert len(result["counts"]) == 256
 
+    @pytest.mark.rtm("AT-M2-07", "FR3.4")
     def test_counts_sum_to_total_pixels(self, converter_mod):
         _, utils = converter_mod
         arr = np.random.randint(0, 256, (128, 128), dtype=np.uint8)
@@ -207,6 +215,7 @@ class TestMalimgLayout:
         from modules.binary_to_image.converter import BinaryConverter
         assert BinaryConverter().layout == 'malimg'
 
+    @pytest.mark.rtm("AT-M2-08", "FR-B1")
     def test_malimg_layout_matches_reference_pipeline(self):
         """Uploaded bytes → same pixels as a Malimg-style PNG loaded by the dataset loader."""
         import cv2
@@ -226,6 +235,7 @@ class TestMalimgLayout:
         out = BinaryConverter(128, layout='square').convert(bytes(range(256)) * 64)
         assert out.shape == (128, 128) and out.dtype == np.uint8
 
+    @pytest.mark.rtm("AT-M2-10", "REL-2")
     def test_tiny_file_does_not_crash(self):
         from modules.binary_to_image.converter import BinaryConverter
         out = BinaryConverter(128).convert(b'MZ' + b'\x00' * 62)   # 64 bytes, minimum
