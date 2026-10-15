@@ -114,6 +114,7 @@ class TestGetFilteredEvents:
         assert len(events) == 1
         assert events[0]['file_name'] == 'recent.exe'
 
+    @pytest.mark.rtm("AT-M6-03", "FR1.5")
     def test_combined_filters(self, populated_db):
         """Family + confidence filter should AND together."""
         events = get_filtered_events(
@@ -139,6 +140,7 @@ class TestGetFilteredEvents:
         }
         assert required.issubset(events[0].keys())
 
+    @pytest.mark.rtm("AT-M6-04", "FR1.5")
     def test_no_sql_injection_via_family_filter(self, populated_db):
         """Malicious family_filter string must not crash or return wrong rows."""
         events = get_filtered_events(
@@ -202,6 +204,7 @@ class TestGalleryHelpers:
         assert len(images) == 5
         assert all(isinstance(img, np.ndarray) for img in images)
 
+    @pytest.mark.rtm("AT-M4-05", "FR4.7")
     def test_load_sample_images_respects_max_images(self, fake_dataset):
         images = _load_sample_images(str(fake_dataset), 'Allaple.A', max_images=2)
         assert len(images) == 2
@@ -220,6 +223,7 @@ class TestGalleryHelpers:
         for img in images:
             assert img.dtype == np.uint8
 
+    @pytest.mark.rtm("AT-M4-06", "FR4.7")
     def test_count_family_images_correct(self, fake_dataset):
         count = _count_family_images(str(fake_dataset), 'Allaple.A')
         assert count == 5

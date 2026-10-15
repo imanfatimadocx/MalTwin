@@ -57,7 +57,7 @@ class TestLabelEncoding:
         mapping = preprocessor.encode_labels(FAMILIES)
         assert len(mapping) == len(FAMILIES)
 
-    @pytest.mark.rtm("AT-M3-02", "M3-FE2")
+    @pytest.mark.rtm("AT-M3-02", "FR4.2")
     def test_encode_indices_are_contiguous(self, loader_mod):
         _, preprocessor = loader_mod
         mapping = preprocessor.encode_labels(FAMILIES)
@@ -91,7 +91,7 @@ class TestMalimgDataset:
         ds = loader.MalimgDataset(synthetic_malimg, split="test")
         assert len(ds) >= 0
 
-    @pytest.mark.rtm("AT-M3-01", "M3-FE3")
+    @pytest.mark.rtm("AT-M3-01", "FR4.3")
     def test_splits_sum_to_total(self, loader_mod, synthetic_malimg):
         loader, _ = loader_mod
         train_ds = loader.MalimgDataset(synthetic_malimg, split="train")
@@ -140,7 +140,7 @@ class TestMalimgDataset:
         assert isinstance(labels, list)
         assert len(labels) == len(ds)
 
-    @pytest.mark.rtm("AT-M3-03", "M3-FE4")
+    @pytest.mark.rtm("AT-M3-03", "FR4.1")
     def test_missing_dir_raises(self, loader_mod, tmp_path):
         loader, _ = loader_mod
         with pytest.raises(FileNotFoundError):

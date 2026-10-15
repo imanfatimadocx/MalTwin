@@ -1,52 +1,81 @@
-requirement,description,status,test_ids,result
-FR1.1,Dashboard shows operational status of all modules,Implemented,AT-M6-01 AT-M6-02 AT-UI-02,PASS
-FR1.2,Cumulative detection statistics (analysed / malware / benign),Implemented,AT-DB-04 AT-M5-11 AT-UI-02 AT-UI-06,PASS
-FR1.3,Persistent sidebar navigation between all screens,Implemented,AT-UI-01,PASS
-FR1.4,Feed of the most recent detection events,Implemented,AT-DB-03 AT-UI-06,PASS
-FR2.1,Start/stop Digital Twin simulation,Deferred (final evaluation),,
-FR2.2,Live Digital Twin traffic log,Deferred (final evaluation),,
-FR2.3,Digital Twin node status panel,Deferred (final evaluation),,
-FR2.4,Protocol traffic pie chart,Deferred (final evaluation),,
-FR3.1,"Upload PE/ELF binary (max 50 MB, magic-byte validation)",Implemented,AT-M2-03 AT-M2-04,PASS
-FR3.2,Convert binary to grayscale image,Implemented,AT-M2-01 AT-M2-02,PASS
-FR3.3,Show metadata incl. SHA-256,Implemented,AT-M2-06,PASS
-FR3.4,Pixel intensity histogram (256 bins),Implemented,AT-M2-07,PASS
-FR5.1,Run detection model on uploaded binary,Implemented,AT-M5-02 AT-UI-03 AT-UI-04,PASS
-FR5.2,Top-1 label with colour-coded confidence,Implemented,AT-M5-03 AT-UI-04,PASS
-FR5.3,Per-class probability chart,Implemented,AT-UI-04,PASS
-FR5.4,Grad-CAM heatmap on request,Implemented,AT-M7-01,PASS
-FR5.5,MITRE ATT&CK for ICS mapping,Implemented,AT-M8-01 AT-M8-02 AT-UI-04,PASS
-FR5.6,PDF / JSON forensic report download,Implemented,AT-M8-03 AT-M8-04 AT-M8-05 AT-UI-05,PASS
-FR-B1,"Backend: validate, read bytes, build 2-D image",Implemented,AT-M2-01 AT-M2-02 AT-M2-08,PASS
-FR-B2,"Backend: load model, preprocess, forward pass",Implemented,AT-M5-01 AT-M5-02 AT-M5-06 AT-UI-04,PASS
-FR-B3,Backend: log detection event to SQLite,Implemented,AT-DB-01 AT-DB-05 AT-UI-04,PASS
-FR-B4,Backend: compile report with MITRE data,Implemented,AT-M8-03 AT-M8-04,PASS
-FR-B5,Backend: start Digital Twin,Deferred (final evaluation),,
-FR-B6,Backend: Grad-CAM hooks on last conv layer,Implemented,AT-M7-01 AT-M7-02 AT-M7-03,PASS
-REL-1,Identical results for identical input,Implemented,AT-M2-09 AT-M5-05,PASS
-REL-2,Corrupt/malformed files handled without crash,Implemented,AT-M2-04 AT-M2-05 AT-M2-10 AT-M7-03,PASS
-REL-4,No detection records lost (WAL),Implemented,AT-DB-02,PASS
-SEC-3,Database file permission 600,Implemented,AT-DB-06,PASS
-SEC-4,SHA-256 computed locally,Implemented,AT-M2-06,PASS
-USE-3,"Errors state what, cause and action",Implemented,AT-UI-03 AT-UI-07,PASS
-M3-FE2,Label encoding,Implemented,AT-M3-02,PASS
-M3-FE3,Stratified train/val/test split,Implemented,AT-M3-01,PASS
-M3-FE4,Dataset integrity validation,Implemented,AT-M3-03,PASS
-M4-FE1,"Augmentation (rotation, flip, brightness)",Implemented,AT-M4-01,PASS
-M4-FE2,Gaussian noise injection,Implemented,AT-M4-02,PASS
-M4-FE3,Class-aware oversampling,Implemented,AT-M4-03 AT-M4-04,PASS
-M5-FE2,Configurable CNN training,Implemented,AT-M5-04,PASS
-M5-FE3,"Evaluation metrics incl. ROC-AUC, FPR, unseen-family",Implemented,AT-M5-07 AT-M5-08,PASS
-M5-FE5,Model serialisation,Implemented,AT-M5-05,PASS
-M5-BEN,Benign class and benign false-positive evaluation,Implemented,AT-M5-09 AT-M5-10 AT-M5-11,PASS
-M9-1,Parse Zeek / IoT-23 conn.log,Implemented,AT-M9-01 AT-M9-02,PASS
-M9-2,IP-free behavioural flow features,Implemented,AT-M9-03,PASS
-M9-3,Behaviour classification model,Implemented,AT-M9-04 AT-M9-07,PASS
-M9-4,Capture-level verdict,Implemented,AT-M9-05 AT-M9-06,PASS
-M9-5,Feature-importance explanation,Implemented,AT-M9-05,PASS
-M9-6,MITRE ATT&CK for ICS per behaviour,Implemented,AT-M9-05,PASS
-M9-7,Dynamic Analysis dashboard page,Implemented,AT-UI-07,PASS
-M10-1,Decision-level fusion with agreement categories,Implemented,AT-M10-01 AT-M10-02,PASS
-M10-2,Combined MITRE mapping tagged by source,Implemented,AT-M10-03,PASS
-M10-3,Hybrid Verdict page and what-if simulator,Implemented,AT-UI-08,PASS
-M1-DESIGN,Digital Twin design page and prerequisite checks,Implemented (design only),AT-UI-09,PASS
+requirement,description,status,verification,test_ids,result
+FR1.1,The system shall display the operational status (active or inactive) of all ten modules on the main dashboard.,Implemented,Test,AT-M6-01 AT-M6-02 AT-UI-02,PASS
+FR1.2,"The system shall display cumulative detection statistics: total files analysed, malware detected, benign files and model accuracy.",Implemented,Test,AT-DB-04 AT-M5-11 AT-UI-02 AT-UI-06 AT-UI-12,PASS
+FR1.3,The system shall provide persistent sidebar navigation to every screen.,Implemented,Test,AT-UI-01,PASS
+FR1.4,The system shall display a feed of the most recent detection events.,Implemented,Test,AT-DB-03 AT-UI-06,PASS
+FR1.5,"The system shall let the user filter the detection history by malware family, minimum confidence and date range, and sort it by time.",Implemented,Test,AT-M6-03 AT-M6-04 AT-UI-11,PASS
+FR1.6,The system shall let the user export the filtered detection history as a CSV file.,Implemented,Test,AT-UI-11,PASS
+FR1.7,"The system shall show in the sidebar whether a model is loaded, whether the dataset is available and which file is currently uploaded.",Implemented,Test,AT-UI-10,PASS
+FR2.1,The system shall let the user start and stop the Digital Twin IIoT simulation from the dashboard.,Deferred (final evaluation),Deferred,,
+FR2.2,The system shall display a live log of the traffic exchanged between simulated IIoT nodes.,Deferred (final evaluation),Deferred,,
+FR2.3,"The system shall display the status of each simulated node (PLC, HMI, sensor, sandbox).",Deferred (final evaluation),Deferred,,
+FR2.4,"The system shall display a chart of simulated traffic by protocol (Modbus, MQTT, other).",Deferred (final evaluation),Deferred,,
+FR2.5,The system shall execute each sample inside an isolated container network with no route to the host's network.,Deferred (final evaluation),Deferred,,
+FR2.6,The system shall capture the network traffic of each simulation run and export it as a Zeek conn.log for dynamic analysis.,Deferred (final evaluation),Deferred,,
+FR2.7,"The system shall show the planned Digital Twin architecture and live checks of its deployment prerequisites (Docker, Zeek, behaviour model).",Implemented (design only),Test,AT-UI-09,PASS
+FR3.1,"The system shall accept PE and ELF binaries of up to 50 MB, identified by their magic bytes (MZ or 0x7F ELF).",Implemented,Test,AT-M2-03 AT-M2-04,PASS
+FR3.2,The system shall convert an accepted binary into a 128 × 128 grayscale image and display it within 3 seconds.,Implemented,Test,AT-M2-01 AT-M2-02,PASS
+FR3.3,"The system shall display the file's metadata: name, size, format and SHA-256 hash.",Implemented,Test,AT-M2-06,PASS
+FR3.4,The system shall display a 256-bin pixel intensity histogram of the image.,Implemented,Test,AT-M2-07,PASS
+FR3.5,"The system shall reject an empty, oversized or non-PE/ELF file with an error message that states what happened, its cause and the action to take.",Implemented,Test,AT-M2-04 AT-M2-05,PASS
+FR3.6,"The system shall lay out the bytes using the Malimg (Nataraj) file-size width table before resizing, so that uploaded binaries match the training images.",Implemented,Test,AT-M2-08,PASS
+FR4.1,"The system shall load the Malimg dataset (one folder per family) and validate its integrity, reporting corrupt images, class counts and the imbalance ratio.",Implemented,Test,AT-M3-03,PASS
+FR4.2,The system shall encode family labels as contiguous integer indices and normalise pixel values before training.,Implemented,Test,AT-M3-02,PASS
+FR4.3,"The system shall split the dataset into stratified training, validation and test sets (70 / 15 / 15) with a fixed random seed.",Implemented,Test,AT-M3-01,PASS
+FR4.4,"The system shall augment training images with random rotation, flips and brightness changes.",Implemented,Test,AT-M4-01,PASS
+FR4.5,The system shall inject Gaussian noise into training images.,Implemented,Test,AT-M4-02,PASS
+FR4.6,The system shall balance the training data with class-aware oversampling so that every family is drawn with equal probability in each epoch.,Implemented,Test,AT-M4-03 AT-M4-04,PASS
+FR4.7,The system shall display a dataset gallery with sample images and the number of images per family.,Implemented,Test,AT-M4-05 AT-M4-06,PASS
+FR4.8,"The system shall train the CNN with configurable epochs, learning rate, batch size and oversampling strategy, from the dashboard or the command line.",Implemented,Test,AT-M5-04,PASS
+FR4.9,"The system shall display training progress and log output while training runs, and allow the user to stop it.",Implemented,Test,AT-M5-14 AT-M5-15 AT-M5-16,PASS
+FR4.10,"The system shall save the best model weights (by validation accuracy) and the class list, and reload them for inference.",Implemented,Test,AT-M5-05,PASS
+FR4.11,"The system shall evaluate the model on the held-out test set and report accuracy, precision, recall, F1, the confusion matrix, ROC-AUC, per-class false positive rate and MCC.",Implemented,Test,AT-M5-07 AT-M5-13,PASS
+FR4.12,"The system shall report results on a class-balanced test set (equal samples per family, repeated random draws) together with balanced accuracy.",Implemented,Test,AT-M5-12 AT-M5-13,PASS
+FR4.13,The system shall measure detection of families not seen in training with a leave-families-out experiment.,Implemented,Test,AT-M5-08,PASS
+FR4.14,The system shall include a Benign class built from clean system binaries and measure the false positive rate on clean files.,Implemented,Test,AT-M5-09 AT-M5-10,PASS
+FR5.1,The system shall run the detection model on the uploaded binary when the user requests it.,Implemented,Test,AT-M5-02 AT-UI-03 AT-UI-04,PASS
+FR5.2,"The system shall display the top-1 family with a confidence bar coloured green (≥ 80%), amber (50–79%) or red (< 50%).",Implemented,Test,AT-M5-03 AT-UI-04,PASS
+FR5.3,The system shall display a chart of the probability of every class.,Implemented,Test,AT-UI-04,PASS
+FR5.4,The system shall display a Grad-CAM heatmap over the binary image when the user requests it.,Implemented,Test,AT-M7-01,PASS
+FR5.5,The system shall display the MITRE ATT&CK for ICS tactics and techniques of the predicted family.,Implemented,Test,AT-M8-01 AT-M8-02 AT-UI-04,PASS
+FR5.6,The system shall generate downloadable PDF and JSON forensic reports.,Implemented,Test,AT-M8-03 AT-M8-04 AT-M8-05 AT-UI-05,PASS
+FR5.7,The system shall explain the Grad-CAM colours in text and let the user download the heatmap overlay as a PNG image.,Implemented,Test,AT-M7-04,PASS
+FR5.8,"The system shall present a file classified as Benign as benign, show no MITRE techniques for it and count it under benign files.",Implemented,Test,AT-M5-11 AT-UI-12,PASS
+FR6.1,The system shall parse Zeek conn.log and IoT-23 conn.log.labeled network captures.,Implemented,Test,AT-M9-01 AT-M9-02,PASS
+FR6.2,The system shall extract behavioural features from each flow without using IP addresses.,Implemented,Test,AT-M9-03,PASS
+FR6.3,"The system shall classify each flow as Benign, PortScan, C&C, DDoS, Attack, FileDownload or Okiru behaviour.",Implemented,Test,AT-M9-04 AT-M9-07,PASS
+FR6.4,"The system shall compute a capture-level score and verdict (MALICIOUS, SUSPICIOUS or BENIGN).",Implemented,Test,AT-M9-05 AT-M9-06,PASS
+FR6.5,The system shall explain the capture verdict with feature importance and each feature's deviation from benign traffic.,Implemented,Test,AT-M9-05,PASS
+FR6.6,The system shall map observed behaviours to MITRE ATT&CK for ICS techniques.,Implemented,Test,AT-M9-05,PASS
+FR6.7,The system shall provide a Dynamic Analysis screen to upload a capture and view its results.,Implemented,Test,AT-UI-07,PASS
+FR7.1,"The system shall fuse the static confidence and the dynamic score into one verdict with an agreement category (confirmed, static only, novel variant, no evidence).",Implemented,Test,AT-M10-01 AT-M10-02,PASS
+FR7.2,"The system shall combine the MITRE techniques of both sources, tagged by the source that supports them.",Implemented,Test,AT-M10-03,PASS
+FR7.3,The system shall provide a Hybrid Verdict screen with a what-if simulator for the fusion rules.,Implemented,Test,AT-UI-08,PASS
+FR7.4,The system shall evaluate fusion on paired static and dynamic evidence of the same samples.,Deferred (final evaluation),Deferred,,
+FR-B1,"When a binary is uploaded, the system shall validate it, read its bytes and build the 2-D image.",Implemented,Test,AT-M2-01 AT-M2-02 AT-M2-08,PASS
+FR-B2,"When detection is requested, the system shall load the model, preprocess the image and run a forward pass.",Implemented,Test,AT-M5-01 AT-M5-02 AT-M5-06 AT-UI-04,PASS
+FR-B3,"When a detection result is available, the system shall log the event to SQLite without blocking the result.",Implemented,Test,AT-DB-01 AT-DB-05 AT-UI-04,PASS
+FR-B4,"When a report is requested, the system shall compile it with the MITRE data of the predicted family.",Implemented,Test,AT-M8-03 AT-M8-04,PASS
+FR-B5,"When the Digital Twin is started, the system shall create the containers and the isolated network.",Deferred (final evaluation),Deferred,,
+FR-B6,"When a heatmap is requested, the system shall compute Grad-CAM through hooks on the last convolutional layer.",Implemented,Test,AT-M7-01 AT-M7-02 AT-M7-03,PASS
+REL-1,Identical input shall give identical results (variance < 0.5% over 10 runs).,Implemented,Test,AT-M2-09 AT-M5-05,PASS
+REL-2,Corrupt or malformed files shall be handled without a crash.,Implemented,Test,AT-M2-04 AT-M2-05 AT-M2-10 AT-M7-03,PASS
+REL-3,The Digital Twin shall run for at least 4 hours between failures.,Deferred (final evaluation),Deferred,,
+REL-4,No detection record shall be lost on an unclean shutdown (SQLite WAL).,Implemented,Test,AT-DB-02,PASS
+REL-5,Two concurrent dashboard sessions shall not interfere with each other.,Implemented,Inspection,,
+USE-1,A first-time user shall complete upload and detection in under 5 minutes.,Implemented,User trial,,
+USE-2,Visual indicators shall be interpretable without a machine-learning background.,Implemented,Inspection,,
+USE-3,"Every error message shall state what happened, its cause and the action to take.",Implemented,Test,AT-UI-03 AT-UI-07,PASS
+USE-4,Technical terms shall have tooltips.,Implemented,Inspection,,
+USE-5,Reports shall download in under 10 seconds and open in standard viewers.,Implemented,Benchmark,,
+PER-1,Conversion shall take < 3 s for files ≤ 10 MB and < 10 s for files ≤ 50 MB.,Implemented,Benchmark,,
+PER-2,Inference shall take < 5 s on CPU and < 1 s on GPU.,Implemented,Benchmark,,
+PER-3,The dashboard shall render within 4 s on the local network.,Implemented,User trial,,
+PER-4,Grad-CAM shall take < 8 s on CPU and < 3 s on GPU.,Implemented,Benchmark,,
+PER-5,Report generation shall take < 10 s.,Implemented,Benchmark,,
+PER-6,"The database shall hold 100,000 records with queries under 500 ms.",Implemented,Benchmark,,
+SEC-1,Uploaded files shall be processed only inside an isolated container.,Partial,Inspection,,
+SEC-2,The Digital Twin network shall be isolated from the host network.,Deferred (final evaluation),Deferred,,
+SEC-3,The database file shall have permission 600 (owner read/write only).,Implemented,Test,AT-DB-06,PASS
+SEC-4,"SHA-256 shall be computed locally, with no external service.",Implemented,Test,AT-M2-06,PASS
+SEC-5,The dashboard shall be bound to localhost by default.,Implemented,Inspection,,

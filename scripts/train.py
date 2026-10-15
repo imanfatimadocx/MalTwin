@@ -212,6 +212,19 @@ def main():
     except Exception as e:
         print(f"  WARNING: Could not save ROC/training curves: {e}", file=sys.stderr)
 
+
+    # ── 10. Balanced test set evaluation (equal samples per class) ───────────
+    try:
+        from modules.detection.balanced_eval import evaluate_balanced, format_balanced_table
+        if len(metrics['y_true']):
+            bal = evaluate_balanced(metrics['y_true'], metrics['y_prob'], class_names)
+            with open(config.BALANCED_EVAL_PATH, 'w') as f:
+                json.dump(bal, f, indent=2)
+            print(format_balanced_table(bal))
+            print(f"  Balanced evaluation → {config.BALANCED_EVAL_PATH}")
+    except Exception as e:
+        print(f"  WARNING: Could not run balanced evaluation: {e}", file=sys.stderr)
+
     print("\n" + "=" * 55)
     print("Done!")
     print(f"  Launch dashboard: streamlit run modules/dashboard/app.py")

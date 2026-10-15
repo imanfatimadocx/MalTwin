@@ -115,13 +115,13 @@ class TestValidateBinaryFormat:
         result = utils.validate_binary_format(_make_elf_bytes())
         assert result in ("ELF", "elf", True, "valid")
 
-    @pytest.mark.rtm("AT-M2-04", "FR3.1", "REL-2")
+    @pytest.mark.rtm("AT-M2-04", "FR3.1", "FR3.5", "REL-2")
     def test_rejects_invalid(self, converter_mod):
         _, utils = converter_mod
         with pytest.raises(Exception):
             utils.validate_binary_format(_make_invalid_bytes())
 
-    @pytest.mark.rtm("AT-M2-05", "REL-2")
+    @pytest.mark.rtm("AT-M2-05", "FR3.5", "REL-2")
     def test_rejects_empty_bytes(self, converter_mod):
         _, utils = converter_mod
         with pytest.raises(Exception):
@@ -215,7 +215,7 @@ class TestMalimgLayout:
         from modules.binary_to_image.converter import BinaryConverter
         assert BinaryConverter().layout == 'malimg'
 
-    @pytest.mark.rtm("AT-M2-08", "FR-B1")
+    @pytest.mark.rtm("AT-M2-08", "FR-B1", "FR3.6")
     def test_malimg_layout_matches_reference_pipeline(self):
         """Uploaded bytes → same pixels as a Malimg-style PNG loaded by the dataset loader."""
         import cv2

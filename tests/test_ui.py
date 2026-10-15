@@ -159,13 +159,13 @@ def test_detection_appears_in_dashboard_history(env):
     assert recent, "recent detections feed does not list the analysed file"
 
 
-@pytest.mark.rtm("AT-UI-07", "M9-7", "USE-3")
+@pytest.mark.rtm("AT-UI-07", "FR6.7", "USE-3")
 def test_dynamic_page_without_model_explains_how_to_train(env):
     at = _run(page="Dynamic Analysis")
     assert "No dynamic model available" in _text(at)
 
 
-@pytest.mark.rtm("AT-UI-08", "M10-3")
+@pytest.mark.rtm("AT-UI-08", "FR7.3")
 def test_hybrid_whatif_simulator_flags_novel_variant(env):
     at = _run(page="Hybrid Verdict")
     # default sliders: static 0.30, dynamic 0.85 → NOVEL VARIANT, SUSPICIOUS
@@ -173,8 +173,46 @@ def test_hybrid_whatif_simulator_flags_novel_variant(env):
     assert "SUSPICIOUS" in txt and "NOVEL VARIANT" in txt
 
 
-@pytest.mark.rtm("AT-UI-09", "M1-DESIGN")
+@pytest.mark.rtm("AT-UI-09", "FR2.7")
 def test_digital_twin_page_reports_status(env):
     at = _run(page="Digital Twin")
     txt = _text(at)
     assert "implementation is scheduled" in txt and "Deployment prerequisites".upper() in txt.upper()
+
+
+@pytest.mark.rtm("AT-UI-10", "FR1.7")
+def test_sidebar_shows_model_and_file_status(env):
+    at = _run(page="Binary Upload", **_uploaded_pe())
+    side = "\n".join(str(m.value) for m in at.sidebar.markdown)
+    assert "Model loaded" in side
+    assert "sample.exe" in side                       # the uploaded file is named in the sidebar
+    assert "No Malimg dataset" in side                # DATA_DIR points to a missing folder
+
+
+@pytest.mark.rtm("AT-UI-11", "FR1.6", "FR1.5")
+def test_history_offers_csv_export(env):
+    at = _run(page="Malware Detection", **_uploaded_pe())
+    [b for b in at.button if "Run Detection" in b.label][0].click().run()
+    at.sidebar.radio[0].set_value("Dashboard").run()
+    assert not at.exception
+    downloads = at.get("download_button")
+    assert any("Export to CSV" in str(d.proto) for d in downloads), "CSV export button missing"
+
+
+@pytest.mark.rtm("AT-UI-12", "FR5.8", "FR1.2")
+def test_benign_prediction_is_shown_as_benign(env):
+    from modules.detection.model import MalTwinCNN
+    from modules.dashboard.db import get_detection_stats
+    torch.manual_seed(0)
+    net = MalTwinCNN(num_classes=len(CLASSES))
+    with torch.no_grad():                                   # bias the output towards "Benign"
+        net.classifier[-1].bias.copy_(torch.tensor([0.0, 10.0, 0.0]))
+    torch.save(net.state_dict(), config.BEST_MODEL_PATH)
+    at = _run(page="Malware Detection", **_uploaded_pe())
+    [b for b in at.button if "Run Detection" in b.label][0].click().run()
+    assert not at.exception, [e.value for e in at.exception]
+    txt = _text(at)
+    assert "classified **Benign**" in txt
+    assert "No MITRE ATT&CK techniques" in txt
+    stats = get_detection_stats(config.DB_PATH)
+    assert stats["total_benign"] == 1 and stats["total_malware"] == 0

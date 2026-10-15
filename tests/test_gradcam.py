@@ -85,6 +85,7 @@ class TestGenerateGradcam:
         assert result is not None
         assert isinstance(result['heatmap_only_png'], bytes)
 
+    @pytest.mark.rtm("AT-M7-04", "FR5.7")
     def test_overlay_png_is_valid_image(self, model, img_array):
         result = generate_gradcam(model, img_array, target_class=0,
                                   device=torch.device('cpu'))

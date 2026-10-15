@@ -123,7 +123,7 @@ class TestArchitectureStructure:
 
 class TestTrainingBehaviour:
 
-    @pytest.mark.rtm("AT-M5-04", "M5-FE2")
+    @pytest.mark.rtm("AT-M5-04", "FR4.8")
     def test_loss_decreases_on_overfit_single_batch(self, detection_mod):
         # Seeded and with dropout disabled so the check is deterministic:
         # the test asks "can the network fit one batch?", not "does it
@@ -289,7 +289,7 @@ class TestLoadModel:
 
 class TestModelSerialization:
 
-    @pytest.mark.rtm("AT-M5-05", "M5-FE5", "REL-1")
+    @pytest.mark.rtm("AT-M5-05", "FR4.10", "REL-1")
     def test_save_and_reload_same_output(self, cnn, dummy_input, tmp_path):
         path = tmp_path / "checkpoint.pt"
         torch.save(cnn.state_dict(), path)

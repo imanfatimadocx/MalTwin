@@ -52,7 +52,7 @@ class TestSniff:
 
 
 class TestBuildBenignClass:
-    @pytest.mark.rtm("AT-M5-10", "M5-BEN")
+    @pytest.mark.rtm("AT-M5-10", "FR4.14")
     def test_writes_malimg_format_pngs_and_manifest(self, clean_dir, tmp_path):
         out = tmp_path / 'malimg' / 'Benign'
         rows = build_benign_class([clean_dir], out, max_files=10)
@@ -98,7 +98,7 @@ class TestEvaluateOnBenign:
         assert res['false_positives'] + round(res['correctly_benign_rate'] * 4) == 4
         assert 0.0 <= res['false_positive_rate'] <= 1.0
 
-    @pytest.mark.rtm("AT-M5-09", "M5-BEN")
+    @pytest.mark.rtm("AT-M5-09", "FR4.14")
     def test_without_benign_class_everything_is_flagged(self, clean_dir):
         names = ['Allaple.A', 'Yuner.A']
         paths = [p for p, _ in iter_candidate_binaries([clean_dir])]
@@ -112,7 +112,7 @@ class TestEvaluateOnBenign:
 
 
 class TestDashboardWiring:
-    @pytest.mark.rtm("AT-M5-11", "FR1.2", "M5-BEN")
+    @pytest.mark.rtm("AT-M5-11", "FR1.2", "FR5.8")
     def test_stats_count_benign(self, tmp_path):
         from modules.dashboard.db import init_db, log_detection_event, get_detection_stats
         db = tmp_path / 'x.db'

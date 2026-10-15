@@ -18,7 +18,7 @@ class TestDecisionTable:
         (0.20, 0.05, 'NO_EVIDENCE',   'BENIGN',     False),   # TC-FUS-5
         (0.85, 0.55, 'CONFIRMED',     'MALICIOUS',  False),   # TC-FUS-6  fused 0.70 boundary
     ])
-    @pytest.mark.rtm("AT-M10-01", "M10-1")
+    @pytest.mark.rtm("AT-M10-01", "FR7.1")
     def test_cases(self, s, d, cat, verdict, esc):
         r = fuse(static_conf=s, dynamic_score=d)
         assert r.category == cat
@@ -43,7 +43,7 @@ class TestValidation:
         with pytest.raises(ValueError):
             fuse()
 
-    @pytest.mark.rtm("AT-M10-02", "M10-1")
+    @pytest.mark.rtm("AT-M10-02", "FR7.1")
     @pytest.mark.parametrize('bad', [-0.1, 1.1])
     def test_out_of_range(self, bad):
         with pytest.raises(ValueError):
@@ -59,7 +59,7 @@ class TestValidation:
 
 
 class TestMitreMerge:
-    @pytest.mark.rtm("AT-M10-03", "M10-2")
+    @pytest.mark.rtm("AT-M10-03", "FR7.2")
     def test_corroborated_first_and_tagged(self):
         static = {'techniques': [{'id': 'T0846', 'name': 'Remote System Discovery'},
                                  {'id': 'T0859', 'name': 'Valid Accounts'}]}

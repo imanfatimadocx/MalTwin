@@ -12,7 +12,7 @@ from sklearn.metrics import (
     classification_report,
     roc_auc_score,
     roc_curve,
-    matthews_corrcoef,
+    matthews_corrcoef, balanced_accuracy_score,
     cohen_kappa_score,
     top_k_accuracy_score,
 )
@@ -177,6 +177,10 @@ def compute_extended_metrics(
     y_pred = y_prob.argmax(axis=1) if len(y_prob) else np.array([], dtype=int)
 
     try:
+        out['balanced_accuracy'] = float(balanced_accuracy_score(y_true, y_pred)) if len(y_pred) else None
+    except Exception:
+        out['balanced_accuracy'] = None
+    try:
         out['mcc'] = float(matthews_corrcoef(y_true, y_pred))
     except Exception:
         out['mcc'] = None
@@ -200,6 +204,8 @@ def compute_extended_metrics(
     out['per_class_auc'] = {}
     if len(present) >= 2 and len(y_prob):
         y_bin = label_binarize(y_true, classes=labels)
+        if y_bin.shape[1] == 1:          # binary case: label_binarize returns one column
+            y_bin = np.hstack([1 - y_bin, y_bin])
         aucs, weights = [], []
         for c in present:
             pos = y_bin[:, c]

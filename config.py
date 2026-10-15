@@ -30,6 +30,7 @@ ROC_CURVE_PATH        = PROCESSED_DIR / "roc_curves.png"
 TRAINING_CURVES_PATH  = PROCESSED_DIR / "training_curves.png"
 TRAINING_HISTORY_PATH = PROCESSED_DIR / "training_history.json"
 UNSEEN_EVAL_PATH      = PROCESSED_DIR / "unseen_family_eval.json"
+BALANCED_EVAL_PATH    = PROCESSED_DIR / "balanced_eval.json"
 
 # ── Dynamic analysis (behavioural, IoT-23 / Digital Twin conn.log) ─────────────
 DYNAMIC_DATA_DIR            = Path(os.getenv("MALTWIN_DYNAMIC_DATA_DIR", str(BASE_DIR / "data/iot23")))

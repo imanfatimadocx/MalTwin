@@ -27,61 +27,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 RESULTS = ROOT / "docs" / "rtm_results.json"
 
-# Requirement catalogue (SRS v1.0 + Evaluation 3 additions). Status reflects the
-# implementation; DEFERRED requirements are listed so the matrix is complete.
-REQS = [
-    ("FR1.1", "Dashboard shows operational status of all modules", "Implemented"),
-    ("FR1.2", "Cumulative detection statistics (analysed / malware / benign)", "Implemented"),
-    ("FR1.3", "Persistent sidebar navigation between all screens", "Implemented"),
-    ("FR1.4", "Feed of the most recent detection events", "Implemented"),
-    ("FR2.1", "Start/stop Digital Twin simulation", "Deferred (final evaluation)"),
-    ("FR2.2", "Live Digital Twin traffic log", "Deferred (final evaluation)"),
-    ("FR2.3", "Digital Twin node status panel", "Deferred (final evaluation)"),
-    ("FR2.4", "Protocol traffic pie chart", "Deferred (final evaluation)"),
-    ("FR3.1", "Upload PE/ELF binary (max 50 MB, magic-byte validation)", "Implemented"),
-    ("FR3.2", "Convert binary to grayscale image", "Implemented"),
-    ("FR3.3", "Show metadata incl. SHA-256", "Implemented"),
-    ("FR3.4", "Pixel intensity histogram (256 bins)", "Implemented"),
-    ("FR5.1", "Run detection model on uploaded binary", "Implemented"),
-    ("FR5.2", "Top-1 label with colour-coded confidence", "Implemented"),
-    ("FR5.3", "Per-class probability chart", "Implemented"),
-    ("FR5.4", "Grad-CAM heatmap on request", "Implemented"),
-    ("FR5.5", "MITRE ATT&CK for ICS mapping", "Implemented"),
-    ("FR5.6", "PDF / JSON forensic report download", "Implemented"),
-    ("FR-B1", "Backend: validate, read bytes, build 2-D image", "Implemented"),
-    ("FR-B2", "Backend: load model, preprocess, forward pass", "Implemented"),
-    ("FR-B3", "Backend: log detection event to SQLite", "Implemented"),
-    ("FR-B4", "Backend: compile report with MITRE data", "Implemented"),
-    ("FR-B5", "Backend: start Digital Twin", "Deferred (final evaluation)"),
-    ("FR-B6", "Backend: Grad-CAM hooks on last conv layer", "Implemented"),
-    ("REL-1", "Identical results for identical input", "Implemented"),
-    ("REL-2", "Corrupt/malformed files handled without crash", "Implemented"),
-    ("REL-4", "No detection records lost (WAL)", "Implemented"),
-    ("SEC-3", "Database file permission 600", "Implemented"),
-    ("SEC-4", "SHA-256 computed locally", "Implemented"),
-    ("USE-3", "Errors state what, cause and action", "Implemented"),
-    ("M3-FE2", "Label encoding", "Implemented"),
-    ("M3-FE3", "Stratified train/val/test split", "Implemented"),
-    ("M3-FE4", "Dataset integrity validation", "Implemented"),
-    ("M4-FE1", "Augmentation (rotation, flip, brightness)", "Implemented"),
-    ("M4-FE2", "Gaussian noise injection", "Implemented"),
-    ("M4-FE3", "Class-aware oversampling", "Implemented"),
-    ("M5-FE2", "Configurable CNN training", "Implemented"),
-    ("M5-FE3", "Evaluation metrics incl. ROC-AUC, FPR, unseen-family", "Implemented"),
-    ("M5-FE5", "Model serialisation", "Implemented"),
-    ("M5-BEN", "Benign class and benign false-positive evaluation", "Implemented"),
-    ("M9-1", "Parse Zeek / IoT-23 conn.log", "Implemented"),
-    ("M9-2", "IP-free behavioural flow features", "Implemented"),
-    ("M9-3", "Behaviour classification model", "Implemented"),
-    ("M9-4", "Capture-level verdict", "Implemented"),
-    ("M9-5", "Feature-importance explanation", "Implemented"),
-    ("M9-6", "MITRE ATT&CK for ICS per behaviour", "Implemented"),
-    ("M9-7", "Dynamic Analysis dashboard page", "Implemented"),
-    ("M10-1", "Decision-level fusion with agreement categories", "Implemented"),
-    ("M10-2", "Combined MITRE mapping tagged by source", "Implemented"),
-    ("M10-3", "Hybrid Verdict page and what-if simulator", "Implemented"),
-    ("M1-DESIGN", "Digital Twin design page and prerequisite checks", "Implemented (design only)"),
-]
+# Requirement catalogue: docs/requirements.json is the single source for the
+# functional and non-functional requirements. The SDS (Chapter 2) is generated
+# from the same file, so the document and this matrix cannot disagree.
+CATALOGUE = ROOT / "docs" / "requirements.json"
+
+
+def load_reqs() -> list[tuple[str, str, str, str]]:
+    """(id, text, status, verification) for every FR and NFR."""
+    cat = json.loads(CATALOGUE.read_text())
+    reqs = [(r["id"], r["text"], r["status"], "Deferred" if r["status"].startswith("Deferred") else "Test")
+            for r in cat["functional"]]
+    reqs += [(r["id"], r["text"], r["status"], r["verification"]) for r in cat["nonfunctional"]]
+    return reqs
+
+
+REQS = load_reqs()
 
 
 def run_tests() -> int:
@@ -124,11 +85,11 @@ def main():
         "",
         "## Requirements → automated tests",
         "",
-        "| Requirement | Description | Status | Automated test cases | Result |",
-        "|---|---|---|---|---|",
+        "| Requirement | Description | Status | Verification | Automated test cases | Result |",
+        "|---|---|---|---|---|---|",
     ]
     covered = 0
-    for rid, desc, status in REQS:
+    for rid, desc, status, verif in REQS:
         tcs = sorted(req_tests.get(rid, []))
         if tcs:
             covered += 1
@@ -136,7 +97,7 @@ def main():
                   ("PASS" if any(result(by_tc[t]) == "PASS" for t in tcs) else "SKIP")
         else:
             res = "—"
-        lines.append(f"| {rid} | {desc} | {status} | {', '.join(tcs) or '—'} | {res} |")
+        lines.append(f"| {rid} | {desc} | {status} | {verif} | {', '.join(tcs) or '—'} | {res} |")
 
     lines += ["", "## Automated test cases → code", "",
               "| Test ID | Requirements | Test function | Cases | Result |", "|---|---|---|---|---|"]
@@ -144,25 +105,26 @@ def main():
         t = by_tc[tc]
         lines.append(f"| {tc} | {', '.join(t['reqs'])} | `{t['nodeid']}` | {t['cases']} | {result(t)} |")
 
-    implemented = [r for r in REQS if not r[2].startswith("Deferred")]
+    implemented = [r for r in REQS if r[3] == "Test"]
     n_pass = sum(result(t) == "PASS" for t in by_tc.values())
     n_fail = sum(result(t) == "FAIL" for t in by_tc.values())
     lines += ["", "## Summary", "",
               f"- Automated test cases in RTM: **{len(by_tc)}** ({sum(t['cases'] for t in by_tc.values())} executions incl. parameters)",
               f"- Passed: **{n_pass}**, failed: **{n_fail}**, skipped: **{len(by_tc) - n_pass - n_fail}**",
-              f"- Implemented requirements covered by at least one automated test: **{sum(1 for r in implemented if r[0] in req_tests)} / {len(implemented)}**",
-              f"- Deferred requirements (Digital Twin): {', '.join(r[0] for r in REQS if r[2].startswith('Deferred'))}"]
+              f"- Requirements verified by test that are covered by at least one automated test: **{sum(1 for r in implemented if r[0] in req_tests)} / {len(implemented)}**",
+              f"- Deferred requirements (Digital Twin): {', '.join(r[0] for r in REQS if r[2].startswith('Deferred'))}",
+              f"- Verified by benchmark / inspection / user trial: {', '.join(r[0] for r in REQS if r[3] not in ('Test', 'Deferred'))}"]
     if unknown:
         lines.append(f"- WARNING: tests reference unknown requirement IDs: {unknown}")
     (ROOT / "docs" / "RTM.md").write_text("\n".join(lines) + "\n")
 
     with open(ROOT / "docs" / "rtm.csv", "w", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["requirement", "description", "status", "test_ids", "result"])
-        for rid, desc, status in REQS:
+        w.writerow(["requirement", "description", "status", "verification", "test_ids", "result"])
+        for rid, desc, status, verif in REQS:
             tcs = sorted(req_tests.get(rid, []))
             res = ("FAIL" if any(result(by_tc[t]) == "FAIL" for t in tcs) else "PASS") if tcs else ""
-            w.writerow([rid, desc, status, " ".join(tcs), res])
+            w.writerow([rid, desc, status, verif, " ".join(tcs), res])
 
     print("\n".join(lines[-6:]))
     print(f"\nWrote docs/RTM.md and docs/rtm.csv")
