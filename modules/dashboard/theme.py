@@ -127,6 +127,12 @@ def confidence_bar_html(confidence: float, family: str) -> str:
 def kpi_card(label: str, value: str, sub: str = '', accent: bool = False) -> str:
     """Return HTML for a KPI metric card."""
     value_color = COLORS['accent'] if accent else COLORS['text_primary']
+    # Built separately: a backslash inside an f-string expression is a
+    # SyntaxError before Python 3.12.
+    sub_html = (
+        '<div style="font-family:\'DM Sans\',sans-serif;font-size:12px;'
+        f'color:{COLORS["text_secondary"]};margin-top:4px;">{sub}</div>'
+    ) if sub else ''
     return f"""
     <div style="background:{COLORS['bg_secondary']};border:1px solid {COLORS['border']};
                 border-radius:6px;padding:16px 20px;height:100%;">
@@ -135,7 +141,7 @@ def kpi_card(label: str, value: str, sub: str = '', accent: bool = False) -> str
                   color:{COLORS['text_secondary']};margin-bottom:8px;">{label}</div>
       <div style="font-family:'JetBrains Mono',monospace;font-size:28px;
                   font-weight:700;color:{value_color};line-height:1;">{value}</div>
-      {f'<div style="font-family:\'DM Sans\',sans-serif;font-size:12px;color:{COLORS["text_secondary"]};margin-top:4px;">{sub}</div>' if sub else ''}
+      {sub_html}
     </div>
     """
 

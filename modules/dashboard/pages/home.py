@@ -200,7 +200,10 @@ def _render_history_section() -> None:
     from modules.dashboard.db import get_filtered_events, get_family_list
 
     # ── Filter controls ───────────────────────────────────────────────────────
-    with st.expander("🔍 Filter & Sort", expanded=False):
+    # A bordered container, not an expander: this section is already inside the
+    # "Full Detection History" expander, and Streamlit < 1.40 forbids nesting them.
+    st.caption("🔍 Filter & Sort")
+    with st.container(border=True):
         col_f1, col_f2, col_f3, col_f4 = st.columns(4)
 
         with col_f1:
