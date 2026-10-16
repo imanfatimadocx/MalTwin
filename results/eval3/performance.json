@@ -1,0 +1,66 @@
+{
+  "machine": {
+    "platform": "Windows-10-10.0.26300-SP0",
+    "python": "3.11.9",
+    "torch": "2.6.0+cpu",
+    "device": "cpu",
+    "cpu_count": 8
+  },
+  "PER-1_convert_1MB": {
+    "mean_s": 0.00016708000330254436,
+    "max_s": 0.0005218000005697832,
+    "runs": 5
+  },
+  "PER-1_convert_10MB": {
+    "mean_s": 0.00012661999789997935,
+    "max_s": 0.0001773999974830076,
+    "runs": 5
+  },
+  "PER-1_convert_50MB": {
+    "mean_s": 0.00014014000480528922,
+    "max_s": 0.00033200001053046435,
+    "runs": 5
+  },
+  "model": "trained best_model.pt",
+  "PER-2_inference": {
+    "mean_s": 0.02795314000104554,
+    "max_s": 0.03975749999517575,
+    "runs": 10
+  },
+  "REL-1_inference_max_abs_diff_10_runs": 0.0,
+  "PER-4_gradcam": {
+    "mean_s": 0.5069120399974054,
+    "max_s": 0.7608897000027355,
+    "runs": 5
+  },
+  "PER-4_gradcam_ok": true,
+  "PER-5_reports_pdf_json": {
+    "mean_s": 0.038189379998948426,
+    "max_s": 0.051378999996813945,
+    "runs": 5
+  },
+  "PER-6_sqlite_query_100k": {
+    "mean_s": 0.7370796400035033,
+    "max_s": 0.7739471000095364,
+    "runs": 5
+  },
+  "M9_dynamic_capture_10k_flows": {
+    "mean_s": 0.3246986599988304,
+    "max_s": 0.37880009999207687,
+    "runs": 5
+  },
+  "M10_fusion": {
+    "mean_s": 3.6296000616857783e-06,
+    "max_s": 1.9899991457350552e-05,
+    "runs": 1000
+  },
+  "verdicts": {
+    "PER-1_convert_10MB": "PASS",
+    "PER-1_convert_50MB": "PASS",
+    "PER-2_inference": "PASS",
+    "PER-4_gradcam": "PASS",
+    "PER-5_reports_pdf_json": "PASS",
+    "PER-6_sqlite_query_100k": "FAIL",
+    "REL-1": "PASS"
+  }
+}

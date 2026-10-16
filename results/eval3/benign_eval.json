@@ -1,0 +1,38 @@
+{
+  "model_has_benign_class": true,
+  "n_files": 500,
+  "false_positives": 51,
+  "false_positive_rate": 0.102,
+  "correctly_benign_rate": 0.898,
+  "confident_false_positive_rate": {
+    "0.50": 0.096,
+    "0.80": 0.064
+  },
+  "mean_confidence": 0.9658810366392135,
+  "top_false_families": [
+    [
+      "VB.AT",
+      28
+    ],
+    [
+      "Rbot!gen",
+      10
+    ],
+    [
+      "Alueron.gen!J",
+      3
+    ],
+    [
+      "Wintrim.BX",
+      3
+    ],
+    [
+      "Swizzor.gen!I",
+      2
+    ]
+  ],
+  "sources": [
+    "C:\\Program Files"
+  ],
+  "skipped_training_files": 0
+}
