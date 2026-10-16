@@ -73,6 +73,10 @@ assert abs(TRAIN_RATIO + VAL_RATIO + TEST_RATIO - 1.0) < 1e-6, \
 
 # ── Oversampler ───────────────────────────────────────────────────────────────
 OVERSAMPLE_STRATEGY = os.getenv("MALTWIN_OVERSAMPLE_STRATEGY", "oversample_minority")
+# Geometric augmentation (rotation / flips) is OFF by default: it reorders the bytes of
+# a Malimg-layout image and lowered test accuracy from 98.7% to 94.2% in the
+# Evaluation 3 ablation (results/eval3/eval_metrics*.json). Enable with --augment.
+AUGMENT_TRAIN = os.getenv("MALTWIN_AUGMENT", "false").lower() in ("1", "true", "yes")
 assert OVERSAMPLE_STRATEGY in {"oversample_minority", "sqrt_inverse", "uniform"}, \
     f"MALTWIN_OVERSAMPLE_STRATEGY must be one of: oversample_minority, sqrt_inverse, uniform"
 

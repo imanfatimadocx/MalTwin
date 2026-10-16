@@ -1,6 +1,6 @@
 # Requirement Traceability Matrix — MalTwin
 
-Generated 2026-10-15 21:32 by `scripts/generate_rtm.py` from a live test run. Each automated test case ID is an `@pytest.mark.rtm` marker on a real test in `tests/`.
+Generated 2026-10-16 20:49 by `scripts/generate_rtm.py` from a live test run. Each automated test case ID is an `@pytest.mark.rtm` marker on a real test in `tests/`.
 
 ## Requirements → automated tests
 
@@ -29,11 +29,11 @@ Generated 2026-10-15 21:32 by `scripts/generate_rtm.py` from a live test run. Ea
 | FR4.1 | The system shall load the Malimg dataset (one folder per family) and validate its integrity, reporting corrupt images, class counts and the imbalance ratio. | Implemented | Test | AT-M3-03 | PASS |
 | FR4.2 | The system shall encode family labels as contiguous integer indices and normalise pixel values before training. | Implemented | Test | AT-M3-02 | PASS |
 | FR4.3 | The system shall split the dataset into stratified training, validation and test sets (70 / 15 / 15) with a fixed random seed. | Implemented | Test | AT-M3-01 | PASS |
-| FR4.4 | The system shall augment training images with random rotation, flips and brightness changes. | Implemented | Test | AT-M4-01 | PASS |
-| FR4.5 | The system shall inject Gaussian noise into training images. | Implemented | Test | AT-M4-02 | PASS |
+| FR4.4 | The system shall provide optional augmentation of training images with random rotation, flips and brightness changes (disabled by default after the Evaluation 3 ablation showed it lowers accuracy on byte images). | Implemented | Test | AT-M4-01 | PASS |
+| FR4.5 | The system shall provide optional Gaussian-noise injection into training images, as part of the augmentation option. | Implemented | Test | AT-M4-02 | PASS |
 | FR4.6 | The system shall balance the training data with class-aware oversampling so that every family is drawn with equal probability in each epoch. | Implemented | Test | AT-M4-03, AT-M4-04 | PASS |
 | FR4.7 | The system shall display a dataset gallery with sample images and the number of images per family. | Implemented | Test | AT-M4-05, AT-M4-06 | PASS |
-| FR4.8 | The system shall train the CNN with configurable epochs, learning rate, batch size and oversampling strategy, from the dashboard or the command line. | Implemented | Test | AT-M5-04 | PASS |
+| FR4.8 | The system shall train the CNN with configurable epochs, learning rate, batch size, oversampling strategy and augmentation on/off, from the dashboard or the command line. | Implemented | Test | AT-M5-04 | PASS |
 | FR4.9 | The system shall display training progress and log output while training runs, and allow the user to stop it. | Implemented | Test | AT-M5-14, AT-M5-15, AT-M5-16 | PASS |
 | FR4.10 | The system shall save the best model weights (by validation accuracy) and the class list, and reload them for inference. | Implemented | Test | AT-M5-05 | PASS |
 | FR4.11 | The system shall evaluate the model on the held-out test set and report accuracy, precision, recall, F1, the confusion matrix, ROC-AUC, per-class false positive rate and MCC. | Implemented | Test | AT-M5-07, AT-M5-13 | PASS |

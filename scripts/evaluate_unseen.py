@@ -44,8 +44,9 @@ def parse_args():
     p.add_argument('--batch-size', type=int, default=config.BATCH_SIZE)
     p.add_argument('--workers',    type=int, default=config.NUM_WORKERS)
     p.add_argument('--seed',       type=int, default=config.RANDOM_SEED)
-    p.add_argument('--no-augment', action='store_true',
-                   help='Train without augmentation (same setting as train.py --no-augment)')
+    p.add_argument('--augment', action='store_true',
+                   help='Enable rotation/flip augmentation (off by default, as in train.py)')
+    p.add_argument('--no-augment', action='store_true', help='Force augmentation off')
     return p.parse_args()
 
 
@@ -89,7 +90,8 @@ def main():
 
     img = config.IMG_SIZE
     va_t = get_val_transforms(img)
-    tr_t = va_t if args.no_augment else get_train_transforms(img)
+    use_aug = (args.augment or config.AUGMENT_TRAIN) and not args.no_augment
+    tr_t = get_train_transforms(img) if use_aug else va_t
     mk = lambda split, t, fams: MalimgDataset(  # noqa: E731
         data_dir, split, img, t, random_seed=args.seed, include_families=fams)
 
@@ -128,7 +130,7 @@ def main():
         'best_val_acc':        float(history['best_val_acc']),
         'epochs':              args.epochs,
         'seed':                args.seed,
-        'augmentation':        not args.no_augment,
+        'augmentation':        use_aug,
     })
 
     with open(config.UNSEEN_EVAL_PATH, 'w', encoding='utf-8') as f:

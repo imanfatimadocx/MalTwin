@@ -205,14 +205,14 @@
   },
   {
    "id": "FR4.4",
-   "text": "The system shall augment training images with random rotation, flips and brightness changes.",
+   "text": "The system shall provide optional augmentation of training images with random rotation, flips and brightness changes (disabled by default after the Evaluation 3 ablation showed it lowers accuracy on byte images).",
    "priority": "Medium",
    "status": "Implemented",
    "source": "SRS v1.0"
   },
   {
    "id": "FR4.5",
-   "text": "The system shall inject Gaussian noise into training images.",
+   "text": "The system shall provide optional Gaussian-noise injection into training images, as part of the augmentation option.",
    "priority": "Low",
    "status": "Implemented",
    "source": "SRS v1.0"
@@ -233,7 +233,7 @@
   },
   {
    "id": "FR4.8",
-   "text": "The system shall train the CNN with configurable epochs, learning rate, batch size and oversampling strategy, from the dashboard or the command line.",
+   "text": "The system shall train the CNN with configurable epochs, learning rate, batch size, oversampling strategy and augmentation on/off, from the dashboard or the command line.",
    "priority": "High",
    "status": "Implemented",
    "source": "SRS v1.0"

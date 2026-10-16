@@ -82,7 +82,9 @@ class TrainingJob:
             cmd += ['--oversample', str(args['oversample'])]
         if 'seed' in args:
             cmd += ['--seed', str(args['seed'])]
-        if args.get('no_augment'):
+        if args.get('augment'):
+            cmd += ['--augment']
+        elif args.get('no_augment'):
             cmd += ['--no-augment']
 
         return cmd
@@ -93,7 +95,7 @@ class TrainingJob:
 
         Args:
             args: dict with keys matching CLI flags (without --):
-                  epochs, lr, batch_size, workers, oversample, seed, no_augment
+                  epochs, lr, batch_size, workers, oversample, seed, augment (or no_augment)
                   All are optional — missing keys fall back to config defaults.
 
         Raises:

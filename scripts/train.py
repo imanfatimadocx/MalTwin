@@ -13,7 +13,8 @@ Options (all optional — defaults come from config.py / .env):
     --workers     INT    DataLoader worker processes      [default: config.NUM_WORKERS]
     --oversample  STR    Oversampling strategy            [default: config.OVERSAMPLE_STRATEGY]
                          Choices: oversample_minority | sqrt_inverse | uniform
-    --no-augment         Disable training augmentation    [flag, default: augmentation ON]
+    --augment            Enable rotation/flip augmentation [flag, default: OFF — see config.AUGMENT_TRAIN]
+    --no-augment         Force augmentation off            [flag]
     --seed        INT    Random seed                      [default: config.RANDOM_SEED]
 
 Exit codes:
@@ -57,8 +58,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('--oversample', type=str,   default=config.OVERSAMPLE_STRATEGY,
                         choices=['oversample_minority', 'sqrt_inverse', 'uniform'],
                         help='Class oversampling strategy for training loader')
+    parser.add_argument('--augment', action='store_true',
+                        help='Enable rotation/flip/brightness augmentation (off by default: it '
+                             'reorders bytes and lowered accuracy in the Eval 3 ablation)')
     parser.add_argument('--no-augment', action='store_true',
-                        help='Disable training augmentation (use val transforms for train)')
+                        help='Force augmentation off (overrides --augment and MALTWIN_AUGMENT)')
     parser.add_argument('--seed',       type=int,   default=config.RANDOM_SEED,
                         help='Random seed for reproducibility')
     return parser.parse_args()
@@ -66,6 +70,8 @@ def parse_args() -> argparse.Namespace:
 
 def main():
     args = parse_args()
+    import config as _cfg
+    args.use_augment = (args.augment or _cfg.AUGMENT_TRAIN) and not args.no_augment
 
     # ── 1. Seed everything ─────────────────────────────────────────────────────
     torch.manual_seed(args.seed)
@@ -105,7 +111,7 @@ def main():
             batch_size=args.batch_size,
             num_workers=args.workers,
             oversample_strategy=args.oversample,
-            augment_train=not args.no_augment,
+            augment_train=args.use_augment,
             random_seed=args.seed,
         )
     except Exception as e:
@@ -116,7 +122,7 @@ def main():
     print(f"  Val batches:    {len(val_loader)}")
     print(f"  Test batches:   {len(test_loader)}")
     print(f"  Classes:        {len(class_names)}")
-    print(f"  Augmentation:   {'OFF (--no-augment)' if args.no_augment else 'ON'}")
+    print(f"  Augmentation:   {'ON (--augment)' if args.use_augment else 'OFF'}")
     print(f"  Oversample:     {args.oversample}")
 
     # ── 4. Build model ─────────────────────────────────────────────────────────
