@@ -525,7 +525,7 @@ def apply_chart_theme(fig, title: str = '') -> None:
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor=COLORS['bg_secondary'],
         font=dict(family='DM Sans, sans-serif', size=12, color=COLORS['text_primary']),
-        title=dict(text=title, font=dict(size=13, color=COLORS['text_secondary'])) if title else None,
+        title=dict(text=title or '', font=dict(size=13, color=COLORS['text_secondary'])),
         margin=dict(l=48, r=24, t=36 if title else 16, b=40),
         xaxis=dict(gridcolor=COLORS['border'], linecolor=COLORS['border'], tickfont=dict(size=11)),
         yaxis=dict(gridcolor=COLORS['border'], linecolor=COLORS['border'], tickfont=dict(size=11)),
