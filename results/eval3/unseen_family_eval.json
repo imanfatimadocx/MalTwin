@@ -1,0 +1,53 @@
+{
+  "auroc_known_vs_unknown": 0.7969114040818959,
+  "fpr_at_95_tpr": 0.9612661391087047,
+  "mean_conf_known": 0.9344179947135196,
+  "mean_conf_unknown": 0.9384807578130148,
+  "n_known": 1266,
+  "n_unknown": 2401,
+  "thresholds": {
+    "0.50": {
+      "unknown_flagged_rate": 0.028321532694710536,
+      "known_flagged_rate": 0.004739336492890996
+    },
+    "0.80": {
+      "unknown_flagged_rate": 0.1149521032902957,
+      "known_flagged_rate": 0.1429699842022117
+    }
+  },
+  "known_families": [
+    "Agent.FYI",
+    "Allaple.A",
+    "Alueron.gen!J",
+    "Autorun.K",
+    "Benign",
+    "C2LOP.P",
+    "Dialplatform.B",
+    "Dontovo.A",
+    "Fakerean",
+    "Instantaccess",
+    "Lolyda.AA1",
+    "Lolyda.AA2",
+    "Lolyda.AA3",
+    "Lolyda.AT",
+    "Malex.gen!J",
+    "Obfuscator.AD",
+    "Rbot!gen",
+    "Swizzor.gen!E",
+    "Swizzor.gen!I",
+    "Wintrim.BX",
+    "Yuner.A"
+  ],
+  "unseen_families": [
+    "Adialer.C",
+    "Allaple.L",
+    "C2LOP.gen!g",
+    "Skintrim.N",
+    "VB.AT"
+  ],
+  "known_test_accuracy": 0.9620853080568721,
+  "best_val_acc": 0.9707740916271722,
+  "epochs": 15,
+  "seed": 42,
+  "augmentation": false
+}
