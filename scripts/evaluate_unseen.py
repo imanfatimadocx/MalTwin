@@ -44,6 +44,8 @@ def parse_args():
     p.add_argument('--batch-size', type=int, default=config.BATCH_SIZE)
     p.add_argument('--workers',    type=int, default=config.NUM_WORKERS)
     p.add_argument('--seed',       type=int, default=config.RANDOM_SEED)
+    p.add_argument('--no-augment', action='store_true',
+                   help='Train without augmentation (same setting as train.py --no-augment)')
     return p.parse_args()
 
 
@@ -86,7 +88,8 @@ def main():
     print(f"Unseen families ({len(holdout)}): {', '.join(holdout)}")
 
     img = config.IMG_SIZE
-    tr_t, va_t = get_train_transforms(img), get_val_transforms(img)
+    va_t = get_val_transforms(img)
+    tr_t = va_t if args.no_augment else get_train_transforms(img)
     mk = lambda split, t, fams: MalimgDataset(  # noqa: E731
         data_dir, split, img, t, random_seed=args.seed, include_families=fams)
 
@@ -125,6 +128,7 @@ def main():
         'best_val_acc':        float(history['best_val_acc']),
         'epochs':              args.epochs,
         'seed':                args.seed,
+        'augmentation':        not args.no_augment,
     })
 
     with open(config.UNSEEN_EVAL_PATH, 'w', encoding='utf-8') as f:
