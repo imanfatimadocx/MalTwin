@@ -1,6 +1,6 @@
 # Requirement Traceability Matrix — MalTwin
 
-Generated 2026-10-16 21:10 by `scripts/generate_rtm.py` from a live test run. Each automated test case ID is an `@pytest.mark.rtm` marker on a real test in `tests/`.
+Generated 2026-10-16 21:21 by `scripts/generate_rtm.py` from a live test run. Each automated test case ID is an `@pytest.mark.rtm` marker on a real test in `tests/`.
 
 ## Requirements → automated tests
 
@@ -83,7 +83,7 @@ Generated 2026-10-16 21:10 by `scripts/generate_rtm.py` from a live test run. Ea
 | PER-6 | The database shall hold 100,000 records with queries under 500 ms. | Implemented | Benchmark | — | — |
 | SEC-1 | Uploaded files shall be processed only inside an isolated container. | Partial | Inspection | — | — |
 | SEC-2 | The Digital Twin network shall be isolated from the host network. | Deferred (final evaluation) | Deferred | — | — |
-| SEC-3 | The database file shall have permission 600 (owner read/write only). | Implemented | Test | AT-DB-06 | PASS |
+| SEC-3 | The database file shall have permission 600 (owner read/write only). | Implemented | Test | AT-DB-06 | SKIP |
 | SEC-4 | SHA-256 shall be computed locally, with no external service. | Implemented | Test | AT-M2-06 | PASS |
 | SEC-5 | The dashboard shall be bound to localhost by default. | Implemented | Inspection | — | — |
 
@@ -96,7 +96,7 @@ Generated 2026-10-16 21:10 by `scripts/generate_rtm.py` from a live test run. Ea
 | AT-DB-03 | FR1.4 | `tests/test_db.py::TestGetRecentEvents::test_limit_parameter` | 1 | PASS |
 | AT-DB-04 | FR1.2 | `tests/test_db.py::TestGetDetectionStats::test_total_analyzed_increments` | 1 | PASS |
 | AT-DB-05 | FR-B3 | `tests/test_db.py::TestLogDetectionEvent::test_never_raises_on_bad_confidence` | 1 | PASS |
-| AT-DB-06 | SEC-3 | `tests/test_db.py::test_database_file_permission_is_owner_only` | 1 | PASS |
+| AT-DB-06 | SEC-3 | `tests/test_db.py::test_database_file_permission_is_owner_only` | 1 | SKIP |
 | AT-DB-07 | FR-B3, FR-B4 | `tests/test_db.py::test_report_event_references_its_detection` | 1 | PASS |
 | AT-DB-08 | FR-B3, REL-2 | `tests/test_db.py::test_foreign_key_and_check_constraints_are_enforced` | 1 | PASS |
 | AT-M10-01 | FR7.1 | `tests/test_fusion.py::TestDecisionTable::test_cases` | 6 | PASS |
@@ -173,7 +173,7 @@ Generated 2026-10-16 21:10 by `scripts/generate_rtm.py` from a live test run. Ea
 ## Summary
 
 - Automated test cases in RTM: **78** (84 executions incl. parameters)
-- Passed: **78**, failed: **0**, skipped: **0**
+- Passed: **77**, failed: **0**, skipped: **1**
 - Requirements verified by test that are covered by at least one automated test: **57 / 57**
 - Deferred requirements (Digital Twin): FR2.1, FR2.2, FR2.3, FR2.4, FR2.5, FR2.6, FR7.4, FR-B5, REL-3, SEC-2
 - Verified by benchmark / inspection / user trial: REL-5, USE-1, USE-2, USE-4, USE-5, PER-1, PER-2, PER-3, PER-4, PER-5, PER-6, SEC-1, SEC-5

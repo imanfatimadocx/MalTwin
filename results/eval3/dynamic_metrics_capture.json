@@ -1,0 +1,215 @@
+{
+  "accuracy": 1.0,
+  "precision_macro": 0.2,
+  "recall_macro": 0.2,
+  "f1_macro": 0.2,
+  "precision_weighted": 1.0,
+  "recall_weighted": 1.0,
+  "f1_weighted": 1.0,
+  "per_class": {
+    "Attack": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "Benign": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 452
+    },
+    "C&C": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "FileDownload": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "PortScan": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    }
+  },
+  "confusion_matrix": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      452,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "labels": [
+    "Attack",
+    "Benign",
+    "C&C",
+    "FileDownload",
+    "PortScan"
+  ],
+  "binary": {
+    "detection_rate": null,
+    "false_positive_rate": 0.0,
+    "precision": null,
+    "roc_auc": null,
+    "tp": 0,
+    "fp": 0,
+    "tn": 452,
+    "fn": 0
+  },
+  "num_test_flows": 452,
+  "metadata": {
+    "data_source": "IoT-23",
+    "split": "capture",
+    "n_train": 162139,
+    "n_test": 452,
+    "classes": [
+      "Attack",
+      "Benign",
+      "C&C",
+      "FileDownload",
+      "PortScan"
+    ],
+    "seed": 42,
+    "test_captures": [
+      "CTU-Honeypot-Capture-4-1"
+    ]
+  },
+  "feature_importance": [
+    {
+      "feature": "port_http",
+      "importance": 0.08885870694590688,
+      "description": "Destination is HTTP 80/8080"
+    },
+    {
+      "feature": "port_ssh",
+      "importance": 0.07026670037188837,
+      "description": "Destination is SSH 22"
+    },
+    {
+      "feature": "resp_ip_bytes",
+      "importance": 0.06652836037876939,
+      "description": "IP-layer bytes received"
+    },
+    {
+      "feature": "log_resp_bytes",
+      "importance": 0.05405108546908398,
+      "description": "Bytes received (log-scaled)"
+    },
+    {
+      "feature": "hist_fin",
+      "importance": 0.05293701701753324,
+      "description": "Number of FIN packets"
+    },
+    {
+      "feature": "resp_bytes",
+      "importance": 0.04590196422287203,
+      "description": "Bytes received by the device"
+    },
+    {
+      "feature": "hist_len",
+      "importance": 0.04225020971899842,
+      "description": "Length of TCP state history"
+    },
+    {
+      "feature": "bytes_per_pkt",
+      "importance": 0.04208436942032844,
+      "description": "Average bytes per packet"
+    },
+    {
+      "feature": "svc_ssh",
+      "importance": 0.040473525558434406,
+      "description": "svc ssh"
+    },
+    {
+      "feature": "resp_pkts",
+      "importance": 0.03500383981660647,
+      "description": "Packets received by the device"
+    },
+    {
+      "feature": "hist_retrans",
+      "importance": 0.030530221278138255,
+      "description": "Number of retransmissions"
+    },
+    {
+      "feature": "log_resp_pkts",
+      "importance": 0.029708632976237336,
+      "description": "Packets received (log-scaled)"
+    },
+    {
+      "feature": "orig_pkts",
+      "importance": 0.027252754773393686,
+      "description": "Packets sent by the device"
+    },
+    {
+      "feature": "duration",
+      "importance": 0.025990545177661604,
+      "description": "Connection duration (s)"
+    },
+    {
+      "feature": "log_duration",
+      "importance": 0.024510019780242694,
+      "description": "Connection duration (log-scaled)"
+    },
+    {
+      "feature": "state_S0",
+      "importance": 0.02425971074108184,
+      "description": "SYN sent, never answered"
+    },
+    {
+      "feature": "hist_syn",
+      "importance": 0.022999692867584704,
+      "description": "Number of SYN packets"
+    },
+    {
+      "feature": "proto_tcp",
+      "importance": 0.02263727375117189,
+      "description": "TCP flow"
+    },
+    {
+      "feature": "log_orig_pkts",
+      "importance": 0.022334311170502146,
+      "description": "Packets sent (log-scaled)"
+    },
+    {
+      "feature": "log_orig_bytes",
+      "importance": 0.021171944198885233,
+      "description": "Bytes sent (log-scaled)"
+    }
+  ]
+}
