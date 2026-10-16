@@ -1,0 +1,34 @@
+@startuml
+!include ../style.iuml
+|Security Researcher|
+start
+:Set epochs, learning rate,\nbatch size, oversampling strategy;
+:Start training;
+|System|
+:Validate dataset integrity;
+if (dataset found?) then ([no])
+  :Report expected folder;
+  stop
+else ([yes])
+endif
+:Encode labels; stratified 70/15/15 split;
+:Build training loader with augmentation\nand class-aware oversampling;
+:Initialise MalTwinCNN;
+repeat
+  :Train one epoch (Adam, cross-entropy);
+  :Validate;
+  if (best validation accuracy?) then ([yes])
+    :Save best_model.pt;
+  else ([no])
+  endif
+  :Report progress and log line;
+repeat while (more epochs and not stopped?) is ([yes])
+->[no];
+:Evaluate best model on test split;
+:Evaluate on balanced test draws;
+:Save metrics, plots, class list;
+:Reload model in dashboard;
+|Security Researcher|
+:Review training result;
+stop
+@enduml

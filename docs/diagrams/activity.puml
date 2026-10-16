@@ -1,0 +1,39 @@
+@startuml
+!include style.iuml
+|Security Analyst|
+start
+:Upload binary file;
+|System|
+if (size ≤ 50 MB and PE/ELF magic bytes?) then ([no])
+  :Show error\n(what / cause / action);
+  stop
+else ([yes])
+  :Compute SHA-256 and metadata;
+  :Convert bytes to 128×128 image\n(Malimg width table);
+endif
+|Security Analyst|
+:Click "Run Detection";
+|System|
+:Run CNN inference;
+:Log detection event to SQLite;
+|Security Analyst|
+if (Grad-CAM requested?) then ([yes])
+  |System|
+  :Generate Grad-CAM heatmap;
+else ([no])
+endif
+|System|
+:Map family to MITRE ATT&CK for ICS;
+|Security Analyst|
+if (network capture available?) then ([yes])
+  :Upload Zeek conn.log;
+  |System|
+  :Analyse behaviour (Module 9);
+  :Fuse static and dynamic evidence (Module 10);
+else ([no])
+endif
+|Security Analyst|
+:Review verdict and explanation;
+:Download PDF / JSON report;
+stop
+@enduml

@@ -14,3 +14,14 @@ reports/
 .DS_Store
 venv/
 .venv/
+data/iot23/
+models/dynamic_model.joblib
+models/openset/
+data/processed/*.joblib
+docs/rtm_results.json
+
+# Local working files (never commit)
+*.zip
+models/*.pt
+data/*_unused/
+.vscode/

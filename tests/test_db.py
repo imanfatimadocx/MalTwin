@@ -15,6 +15,8 @@ import sqlite3
 import time
 from pathlib import Path
 
+import sys
+
 import pytest
 
 
@@ -66,6 +68,7 @@ class TestInitDb:
         con.close()
         assert "detection_events" in tables
 
+    @pytest.mark.rtm("AT-DB-02", "REL-4")
     def test_wal_mode_enabled(self, db_mod, tmp_path):
         db_path = tmp_path / "wal_test.db"
         db_mod.init_db(db_path)
@@ -112,6 +115,7 @@ class TestLogDetectionEvent:
         con.close()
         assert count == 5
 
+    @pytest.mark.rtm("AT-DB-01", "FR-B3")
     def test_stored_sha256_matches(self, db_mod, tmp_db):
         sha = "c" * 64
         _log(db_mod, tmp_db, sha256=sha)
@@ -136,6 +140,7 @@ class TestLogDetectionEvent:
         con.close()
         assert row[0] == "Yuner.A"
 
+    @pytest.mark.rtm("AT-DB-05", "FR-B3")
     def test_never_raises_on_bad_confidence(self, db_mod, tmp_db):
         """log_detection_event must not raise — it retries silently."""
         try:
@@ -160,6 +165,7 @@ class TestGetRecentEvents:
         results = db_mod.get_recent_events(tmp_db)
         assert len(results) == 1
 
+    @pytest.mark.rtm("AT-DB-03", "FR1.4")
     def test_limit_parameter(self, db_mod, tmp_db):
         for i in range(10):
             _log(db_mod, tmp_db, sha256="d" * 63 + str(i))
@@ -203,6 +209,7 @@ class TestGetDetectionStats:
         for key in ("total_analyzed", "total_malware", "total_benign"):
             assert key in result, f"Missing key: {key}"
 
+    @pytest.mark.rtm("AT-DB-04", "FR1.2")
     def test_total_analyzed_increments(self, db_mod, tmp_db):
         before = db_mod.get_detection_stats(tmp_db)["total_analyzed"]
         _log(db_mod, tmp_db)
@@ -259,8 +266,9 @@ class TestLogReportEvent:
         assert len(rows) == 1
 
     def test_inserted_values_correct(self, db_mod, tmp_db):
-        from modules.dashboard.db import log_report_event, get_connection
-        log_report_event(tmp_db, 42, 'b' * 64, 'PDF', True)
+        from modules.dashboard.db import log_report_event, log_detection_event, get_connection
+        det_id = log_detection_event(tmp_db, 'f.exe', 'b' * 64, 'PE', 10, 'Yuner.A', 0.9, 'cpu')
+        log_report_event(tmp_db, det_id, 'b' * 64, 'PDF', True)
         with get_connection(tmp_db) as conn:
             row = conn.execute("SELECT * FROM report_events").fetchone()
         assert dict(row)['sha256'] == 'b' * 64
@@ -271,3 +279,51 @@ class TestLogReportEvent:
         from modules.dashboard.db import log_report_event
         bad_path = tmp_path / "nonexistent_dir" / "db.db"
         log_report_event(bad_path, None, 'a' * 64, 'JSON', False)
+
+@pytest.mark.rtm("AT-DB-06", "SEC-3")
+@pytest.mark.skipif(sys.platform == "win32", reason="POSIX file modes; Windows uses NTFS ACLs")
+@pytest.mark.skipif(__import__("os").name == "nt", reason="POSIX file permissions only")
+def test_database_file_permission_is_owner_only(tmp_path):
+    """SEC-3: the SQLite log is created with permission 600 (owner read/write)."""
+    import os, stat
+    from modules.dashboard.db import init_db
+    db = tmp_path / "perm.db"
+    init_db(db)
+    assert stat.S_IMODE(os.stat(db).st_mode) == 0o600
+
+
+# ===========================================================================
+# Schema constraints (relational schema in SDS Section 3.5)
+# ===========================================================================
+@pytest.mark.rtm("AT-DB-07", "FR-B3", "FR-B4")
+def test_report_event_references_its_detection(tmp_path):
+    from modules.dashboard.db import (init_db, log_detection_event, log_report_event,
+                                      get_connection)
+    db = tmp_path / "x.db"
+    init_db(db)
+    det_id = log_detection_event(db, 'a.exe', 'c' * 64, 'PE', 100, 'Allaple.A', 0.97, 'cpu')
+    assert isinstance(det_id, int) and det_id >= 1
+    log_report_event(db, det_id, 'c' * 64, 'JSON', False)
+    with get_connection(db) as conn:
+        row = conn.execute("""SELECT d.predicted_family FROM report_events r
+                              JOIN detection_events d ON d.id = r.detection_event_id""").fetchone()
+    assert row[0] == 'Allaple.A'
+
+
+@pytest.mark.rtm("AT-DB-08", "FR-B3", "REL-2")
+def test_foreign_key_and_check_constraints_are_enforced(tmp_path):
+    from modules.dashboard.db import (init_db, log_detection_event, log_report_event,
+                                      get_connection)
+    db = tmp_path / "x.db"
+    init_db(db)
+    # a report for a detection that does not exist is rejected (FK), without raising
+    log_report_event(db, 999, 'c' * 64, 'PDF', False)
+    # out-of-range confidence, unknown format and malformed hash are rejected (CHECK)
+    assert log_detection_event(db, 'a', 'c' * 64, 'PE', 1, 'X', 1.5, 'cpu') is None
+    assert log_detection_event(db, 'a', 'c' * 64, 'ZIP', 1, 'X', 0.5, 'cpu') is None
+    assert log_detection_event(db, 'a', 'short', 'PE', 1, 'X', 0.5, 'cpu') is None
+    with get_connection(db) as conn:
+        assert conn.execute("SELECT COUNT(*) FROM report_events").fetchone()[0] == 0
+        assert conn.execute("SELECT COUNT(*) FROM detection_events").fetchone()[0] == 0
+        fks = conn.execute("PRAGMA foreign_key_list(report_events)").fetchall()
+    assert [(r['table'], r['from'], r['to']) for r in fks] == [('detection_events', 'detection_event_id', 'id')]

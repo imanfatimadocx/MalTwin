@@ -1,0 +1,24 @@
+@startuml
+!include ../style.iuml
+|Researcher / Administrator|
+start
+:Choose sample; start simulation;
+|Digital Twin (planned)|
+if (Docker and Zeek available?) then ([no])
+  :Report missing prerequisite;
+  stop
+else ([yes])
+endif
+:Create internal network\n(no route to host);
+:Start PLC, HMI, sensor, sandbox containers;
+:Start Zeek capture on twin bridge;
+:Run sample in sandbox (time limit);
+:Stop capture; export conn.log;
+:Stop and remove containers;
+|System|
+:Analyse capture (Module 9);
+:Fuse with static result (Module 10);
+|Researcher / Administrator|
+:Review hybrid verdict;
+stop
+@enduml

@@ -1,0 +1,38 @@
+@startuml
+!include style.iuml
+hide circle
+hide methods
+skinparam linetype ortho
+class "detection_events" as DE <<table>> {
+  <b>PK</b> id : INTEGER AUTOINCREMENT
+  timestamp : TEXT NOT NULL  -- ISO 8601 UTC
+  file_name : TEXT NOT NULL
+  sha256 : TEXT NOT NULL  CHECK length = 64
+  file_format : TEXT NOT NULL  CHECK IN ('PE','ELF')
+  file_size : INTEGER NOT NULL  CHECK ≥ 0
+  predicted_family : TEXT NOT NULL
+  confidence : REAL NOT NULL  CHECK 0.0–1.0
+  device_used : TEXT NOT NULL
+  ..
+  <i>INDEX</i> idx_timestamp (timestamp)
+  <i>INDEX</i> idx_family_time (predicted_family, timestamp)
+}
+class "report_events" as RE <<table>> {
+  <b>PK</b> id : INTEGER AUTOINCREMENT
+  timestamp : TEXT NOT NULL
+  <b>FK</b> detection_event_id : INTEGER NULL
+      REFERENCES detection_events(id) ON DELETE SET NULL
+  sha256 : TEXT NOT NULL
+  report_format : TEXT NOT NULL  CHECK IN ('PDF','JSON')
+  gradcam_included : INTEGER NOT NULL DEFAULT 0  CHECK IN (0,1)
+  ..
+  <i>INDEX</i> idx_report_sha256 (sha256)
+  <i>INDEX</i> idx_report_detection (detection_event_id)
+}
+DE "1" -- "0..*" RE : detection_event_id → id
+note bottom of DE
+  SQLite 3, WAL journal mode,
+  PRAGMA foreign_keys = ON,
+  file permission 0600
+end note
+@enduml

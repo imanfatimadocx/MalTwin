@@ -1,0 +1,102 @@
+@startuml
+!include style.iuml
+skinparam classAttributeIconSize 0
+hide empty members
+hide circle
+class BinaryConverter {
+  - img_size : int
+  - layout : str
+  + convert(file_bytes : bytes) : ndarray
+  + layout_2d(file_bytes : bytes) : ndarray
+  + {static} malimg_width(n_bytes : int) : int
+  + to_png_bytes(img : ndarray) : bytes
+}
+class MalimgDataset {
+  + samples : list
+  + class_names : list[str]
+  + class_counts : dict
+  + __len__() : int
+  + __getitem__(idx : int) : tuple
+  + get_labels() : list[int]
+}
+class ClassAwareOversampler {
+  - dataset : MalimgDataset
+  - strategy : str
+  - class_weights : dict
+  + get_sampler() : WeightedRandomSampler
+}
+class MalTwinCNN {
+  - block1 : ConvBlock
+  - block2 : ConvBlock
+  - block3 : ConvBlock
+  - classifier : Sequential
+  + gradcam_layer : Conv2d
+  + forward(x : Tensor) : Tensor
+}
+class ConvBlock {
+  - conv1 : Conv2d
+  - conv2 : Conv2d
+  - bn1 : BatchNorm2d
+  - bn2 : BatchNorm2d
+  - pool : MaxPool2d
+  - dropout : Dropout2d
+  + forward(x : Tensor) : Tensor
+}
+class "nn.Module" as Module <<PyTorch>>
+class "Dataset" as TDS <<PyTorch>>
+class TrainingJob {
+  - process : Popen
+  - state : TrainingJobState
+  + start(args : dict) : void
+  + poll() : tuple
+  + stop() : void
+  + is_running() : bool
+}
+class DynamicDetector {
+  - model : RandomForestClassifier
+  - benign_mean : ndarray
+  - benign_std : ndarray
+  + classes_ : list[str]
+  + fit(flows : DataFrame) : DynamicDetector
+  + predict_proba_df(flows : DataFrame) : DataFrame
+  + analyse_capture(flows : DataFrame, mitre_db : dict) : DynamicReport
+  + explain(flows : DataFrame) : list[dict]
+  + evaluate(flows : DataFrame) : dict
+  + save(path : Path) : void
+  + {static} load(path : Path) : DynamicDetector
+}
+class DynamicReport <<dataclass>> {
+  + n_flows : int
+  + capture_score : float
+  + verdict : str
+  + behaviour_profile : dict
+  + explanation : list
+  + mitre : dict
+  + to_dict() : dict
+}
+class FusionResult <<dataclass>> {
+  + verdict : str
+  + fused_score : float
+  + category : str
+  + escalated : bool
+  + mitre_techniques : list
+  + to_dict() : dict
+}
+class inference <<utility>> {
+  + {static} load_model(path, n, device) : MalTwinCNN
+  + {static} predict_single(model, img, names, device) : dict
+}
+class fusion <<utility>> {
+  + {static} fuse(static_conf, dynamic_score, ...) : FusionResult
+}
+Module <|-- MalTwinCNN
+Module <|-- ConvBlock
+TDS <|-- MalimgDataset
+MalTwinCNN *-- "3" ConvBlock : contains
+ClassAwareOversampler --> "1" MalimgDataset : weights
+DynamicDetector ..> DynamicReport : <<create>>
+fusion ..> FusionResult : <<create>>
+inference ..> MalTwinCNN : <<use>>
+inference ..> BinaryConverter : <<use>>
+TrainingJob ..> MalTwinCNN : <<train>>
+@enduml

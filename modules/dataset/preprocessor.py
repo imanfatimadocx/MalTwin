@@ -142,7 +142,7 @@ def save_class_names(class_names: list[str], output_path: Path) -> None:
         - Overwrites if file already exists.
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_path, 'w') as f:
+    with open(output_path, 'w', encoding='utf-8') as f:
         json.dump({'class_names': class_names}, f, indent=2)
 
 
@@ -164,6 +164,6 @@ def load_class_names(input_path: Path) -> list[str]:
             f"class_names.json not found at {input_path}. "
             "Run scripts/train.py first."
         )
-    with open(input_path) as f:
+    with open(input_path, encoding='utf-8') as f:
         return json.load(f)['class_names']
 

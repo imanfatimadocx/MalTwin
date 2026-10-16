@@ -1,0 +1,35 @@
+@startuml
+!include ../style.iuml
+start
+:Read static result and dynamic report from session;
+if (any evidence available?) then ([no])
+  :Offer what-if simulator only;
+  stop
+else ([yes])
+endif
+:Static score = 1 − P(Benign)\n(or top-1 confidence without Benign class);
+:Fused score = weighted mean of available scores\n(weights 0.5 / 0.5);
+if (static ≥ 0.80 and dynamic ≥ 0.50?) then ([yes])
+  :Category CONFIRMED;
+elseif (static ≥ 0.80 only?) then ([yes])
+  :Category STATIC_ONLY;
+elseif (dynamic ≥ 0.50 only?) then ([yes])
+  :Category NOVEL_VARIANT;
+else ([no])
+  :Category NO_EVIDENCE;
+endif
+if (fused ≥ 0.70?) then ([yes])
+  :Verdict MALICIOUS;
+elseif (fused ≥ 0.40?) then ([yes])
+  :Verdict SUSPICIOUS;
+else ([no])
+  :Verdict BENIGN;
+endif
+if (category = NOVEL_VARIANT and verdict = BENIGN?) then ([yes])
+  :Escalate verdict to SUSPICIOUS;
+else ([no])
+endif
+:Merge MITRE techniques, tagged by source,\ncorroborated first;
+:Display verdict, category and reason;
+stop
+@enduml

@@ -1,0 +1,17 @@
+@startuml
+!include style.iuml
+hide empty description
+[*] --> Uploaded : file selected
+Uploaded --> Rejected : [size > 50 MB or invalid magic bytes]
+Rejected --> [*]
+Uploaded --> Converted : [valid] / compute SHA-256, build image
+Converted --> Uploaded : new file selected
+Converted --> Classified : Run Detection / log event
+Classified --> Explained : Grad-CAM requested
+Classified --> Fused : capture analysed / fuse()
+Explained --> Fused : capture analysed / fuse()
+Classified --> Reported : report requested
+Explained --> Reported : report requested
+Fused --> Reported : report requested
+Reported --> [*]
+@enduml

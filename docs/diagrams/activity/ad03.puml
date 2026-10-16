@@ -1,0 +1,36 @@
+@startuml
+!include ../style.iuml
+|Security Analyst|
+start
+:Click "Run Detection";
+|System|
+if (file uploaded and model loaded?) then ([no])
+  :Show guidance\n(upload a file / train a model);
+  stop
+else ([yes])
+endif
+:Normalise image to [-1, 1];
+:Forward pass through MalTwinCNN;
+:Softmax → probabilities, top-1, top-3;
+fork
+  :Log detection event to SQLite\n(retry once on failure);
+fork again
+  :Display label, confidence bar,\nprobability chart;
+end fork
+if (predicted class = Benign?) then ([yes])
+  :Show "classified Benign",\nno MITRE techniques;
+else ([no])
+  :Map family to MITRE ATT&CK for ICS;
+  :Display tactics and techniques;
+endif
+|Security Analyst|
+if (Grad-CAM wanted?) then ([yes])
+  |System|
+  :Compute Grad-CAM on last conv layer;
+  :Overlay heatmap and explain colours;
+  |Security Analyst|
+  :Inspect heatmap\n(optional PNG download);
+else ([no])
+endif
+stop
+@enduml

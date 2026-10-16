@@ -1,0 +1,33 @@
+@startuml
+!include ../style.iuml
+|Security Analyst|
+start
+:Select binary file;
+|System|
+:Read file bytes;
+if (size ≤ 50 MB?) then ([no])
+  :Show "File too large"\n(what / cause / action);
+  stop
+else ([yes])
+endif
+:Compute SHA-256;
+if (same SHA-256 as current file?) then ([yes])
+  :Keep current result;
+  stop
+else ([no])
+endif
+:Clear previous file state;
+if (magic bytes MZ or 0x7F ELF?) then ([no])
+  :Show "Unsupported file format"\n(what / cause / action);
+  stop
+else ([yes])
+endif
+:Look up row width in Malimg table;
+:Lay out bytes as 2-D grayscale array;
+:Resize to 128 × 128;
+:Store image and metadata in session;
+:Display image, metadata, histogram;
+|Security Analyst|
+:Review file analysis;
+stop
+@enduml

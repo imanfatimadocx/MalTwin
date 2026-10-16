@@ -1,0 +1,36 @@
+@startuml
+!include ../style.iuml
+autonumber
+actor "Security Researcher" as R
+participant "scripts/evaluate.py" as E
+control "evaluator\n(Module 5)" as EV
+control "balanced_eval\n(Module 5)" as BE
+entity "MalTwinCNN" as CNN
+database "data/processed/" as FS
+actor "Academic Evaluator" as V
+R -> E : python scripts/evaluate.py --save-metrics
+activate E
+alt model file missing (UC-12 1a)
+  E --> R : "Run scripts/train.py first"
+else model present
+  E -> EV : evaluate(model, test_loader)
+  activate EV
+  EV -> CNN : forward pass on every test image
+  CNN --> EV : probabilities
+  EV -> EV : accuracy, P/R/F1, confusion matrix,\nROC-AUC, per-class FPR, MCC, balanced accuracy
+  EV --> E : metrics, y_true, y_prob
+  deactivate EV
+  E -> BE : evaluate_balanced(y_true, y_prob, n_draws = 10)
+  activate BE
+  loop 10 draws
+    BE -> BE : balanced_indices(k = smallest class)
+    BE -> BE : metrics on balanced subset
+  end
+  BE --> E : mean ± std per metric
+  deactivate BE
+  E -> FS : eval_metrics.json, balanced_eval.json,\nconfusion_matrix.png, roc_curves.png
+  E --> R : metrics tables
+end
+deactivate E
+V -> FS : view metrics (dashboard / report)
+@enduml

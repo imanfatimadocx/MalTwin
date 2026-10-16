@@ -1,0 +1,33 @@
+@startuml
+!include ../style.iuml
+autonumber
+actor "Security Analyst /\nAcademic Evaluator" as A
+boundary "Main Dashboard\n(Module 6)" as UI
+control "health\n(Module 6)" as H
+control "db\n(Module 8)" as DB
+database "SQLite" as SQL
+A -> UI : open Dashboard
+activate UI
+UI -> DB : get_detection_stats()
+DB -> SQL : SELECT COUNT(*) … GROUP BY
+DB --> UI : total, malware, benign
+UI -> H : get_all_module_statuses()
+H --> UI : status of M1–M10 (cached 30 s)
+UI -> DB : get_recent_events(limit = 5)
+DB --> UI : recent events
+alt no events (UC-09 3a)
+  UI --> A : "No detections yet"
+else events exist
+  UI --> A : KPI cards, module table, recent feed
+  A -> UI : set family / confidence / date filters
+  UI -> DB : get_filtered_events(family, min_conf, days_back, sort)
+  DB -> SQL : parameterised SELECT … WHERE …
+  DB --> UI : filtered rows
+  UI --> A : filtered history table
+  opt export
+    A -> UI : "Export to CSV"
+    UI --> A : maltwin_detection_history.csv
+  end
+end
+deactivate UI
+@enduml

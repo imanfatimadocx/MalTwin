@@ -43,7 +43,7 @@ def fake_train_script(tmp_path) -> Path:
         print("[6/6] Saving outputs...", flush=True)
         print("Done!", flush=True)
         sys.exit(0)
-    """))
+    """), encoding="utf-8")
     return script
 
 
@@ -55,7 +55,7 @@ def fail_train_script(tmp_path) -> Path:
         import sys
         print('ERROR: Dataset not found', flush=True)
         sys.exit(1)
-    """))
+    """), encoding="utf-8")
     return script
 
 
@@ -145,6 +145,7 @@ class TestTrainingJobLifecycle:
         assert job.state.status == 'running'
         job.stop()
 
+    @pytest.mark.rtm("AT-M5-14", "FR4.9")
     def test_log_lines_accumulate_across_polls(self, fake_train_script, monkeypatch):
         job = TrainingJob()
         self._patch_cmd(job, fake_train_script, monkeypatch)
@@ -168,9 +169,10 @@ class TestTrainingJobLifecycle:
         assert job.state.status == 'failed'
         assert job.state.return_code == 1
 
+    @pytest.mark.rtm("AT-M5-15", "FR4.9")
     def test_stop_sets_status_stopped(self, tmp_path, monkeypatch):
         script = tmp_path / "sleep.py"
-        script.write_text("import time; time.sleep(30)")
+        script.write_text("import time; time.sleep(30)", encoding="utf-8")
         job = TrainingJob()
         self._patch_cmd(job, script, monkeypatch)
         job.start({})
@@ -192,6 +194,7 @@ class TestHelperFunctions:
         from modules.dashboard.pages.training import _estimate_progress
         assert _estimate_progress([], 30) == pytest.approx(0.05)
 
+    @pytest.mark.rtm("AT-M5-16", "FR4.9")
     def test_estimate_progress_parses_epoch_line(self):
         from modules.dashboard.pages.training import _estimate_progress
         lines = ["Epoch 015/030 | Train Loss: 0.123 | Val Acc: 0.8500"]

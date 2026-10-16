@@ -69,6 +69,7 @@ class TestTrainTransforms:
         t = augmentor.get_train_transforms()(_make_pil_image())
         assert t.dtype == torch.float32
 
+    @pytest.mark.rtm("AT-M4-01", "FR4.4")
     def test_augmentation_produces_variation(self, enhancement_mod):
         augmentor, _ = enhancement_mod
         transform = augmentor.get_train_transforms()
@@ -123,6 +124,7 @@ class TestGaussianNoise:
         t = _make_tensor()
         assert noise(t).dtype == t.dtype
 
+    @pytest.mark.rtm("AT-M4-02", "FR4.5")
     def test_nonzero_noise_modifies_tensor(self, enhancement_mod):
         augmentor, _ = enhancement_mod
         if not hasattr(augmentor, "GaussianNoise"):
@@ -162,6 +164,7 @@ class TestClassAwareOversampler:
         sampler = balancer.ClassAwareOversampler(ds).get_sampler()
         assert len(sampler.weights) == len(labels)
 
+    @pytest.mark.rtm("AT-M4-03", "FR4.6")
     def test_minority_weight_greater_than_majority(self, enhancement_mod):
         _, balancer = enhancement_mod
         labels = [0] * 1000 + [1] * 50
@@ -193,6 +196,7 @@ class TestClassAwareOversampler:
         sampler = balancer.ClassAwareOversampler(ds, strategy="uniform").get_sampler()
         assert isinstance(sampler, WeightedRandomSampler)
 
+    @pytest.mark.rtm("AT-M4-04", "FR4.6")
     def test_invalid_strategy_raises(self, enhancement_mod):
         _, balancer = enhancement_mod
         labels = [0] * 10

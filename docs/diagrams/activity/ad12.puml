@@ -1,0 +1,28 @@
+@startuml
+!include ../style.iuml
+|Security Researcher|
+start
+:Run evaluation;
+|System|
+if (trained model present?) then ([no])
+  :Report "train first";
+  stop
+else ([yes])
+endif
+:Predict every image of the test split;
+fork
+  :Full-split metrics\n(accuracy, P/R/F1, CM, ROC-AUC,\nFPR, MCC, balanced accuracy);
+fork again
+  :k = size of smallest class;
+  repeat
+    :Draw k samples per class\n(without replacement);
+    :Compute metrics on balanced subset;
+  repeat while (10 draws done?) is ([no])
+  ->[yes];
+  :Mean ± standard deviation;
+end fork
+:Save eval_metrics.json, balanced_eval.json, plots;
+|Academic Evaluator|
+:Review metrics;
+stop
+@enduml

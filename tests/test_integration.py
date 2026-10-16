@@ -83,7 +83,7 @@ class TestFullPipeline:
         ds = MalimgDataset(config.DATA_DIR, 'train', img_size=config.IMG_SIZE)
 
         assert len(ds) > 0
-        assert len(ds.class_names) == 25
+        assert len(ds.class_names) == 25 + ('Benign' in ds.class_names)   # + optional Benign class
 
         tensor, label = ds[0]
         assert tensor.shape == (1, config.IMG_SIZE, config.IMG_SIZE)
@@ -99,7 +99,7 @@ class TestFullPipeline:
 
         from modules.dataset.loader import MalimgDataset
         ds = MalimgDataset(config.DATA_DIR, 'train')
-        assert len(set(ds.get_labels())) == 25
+        assert len(set(ds.get_labels())) == len(ds.class_names)   # every class present in train split
 
     @pytest.mark.integration
     def test_model_inference_pipeline(self, sample_pe_bytes):
@@ -234,7 +234,7 @@ class TestFullPipeline:
         pdf_bytes = generate_pdf_report(report_data)
         assert pdf_bytes is not None
         assert pdf_bytes[:4] == b'%PDF'
-        assert len(pdf_bytes) > 5000
+        assert len(pdf_bytes) > 2000   # two-page report without heatmap is ~3 KB
 
     @pytest.mark.integration
     def test_detection_event_logged_to_db(self, tmp_path, sample_pe_bytes):
@@ -284,7 +284,7 @@ class TestFullPipeline:
         class_names = load_class_names(config.CLASS_NAMES_PATH)
         mitre_db    = load_mitre_db()
 
-        missing = [n for n in class_names if n not in mitre_db]
+        missing = [n for n in class_names if n not in mitre_db and n != config.BENIGN_CLASS_NAME]
         assert not missing, (
             f"The following trained classes have no MITRE mapping: {missing}\n"
             "Update data/mitre_ics_mapping.json to add them."

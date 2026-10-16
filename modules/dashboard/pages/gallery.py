@@ -17,6 +17,13 @@ from PIL import Image
 import numpy as np
 
 import config
+from modules.dashboard.theme import image_full_width
+
+
+def _png_files(family_dir: Path) -> list[Path]:
+    """PNG files in a folder, matched case-insensitively and listed once.
+    (glob('*.png') + glob('*.PNG') returns every file twice on Windows.)"""
+    return sorted(p for p in family_dir.iterdir() if p.is_file() and p.suffix.lower() == '.png')
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -49,8 +56,7 @@ def _load_sample_images(
     if not family_dir.exists():
         return []
 
-    png_files = sorted(list(family_dir.glob('*.png')) + list(family_dir.glob('*.PNG')))
-    png_files = png_files[:max_images]
+    png_files = _png_files(family_dir)[:max_images]
 
     images = []
     for path in png_files:
@@ -68,7 +74,7 @@ def _count_family_images(data_dir: str, family_name: str) -> int:
     family_dir = Path(data_dir) / family_name
     if not family_dir.exists():
         return 0
-    return len(list(family_dir.glob('*.png')) + list(family_dir.glob('*.PNG')))
+    return len(_png_files(family_dir))
 
 
 def render():
@@ -197,10 +203,9 @@ def _render_overview_strip(family_names: list[str], data_dir: str) -> None:
             images = _load_sample_images(data_dir, family, max_images=1)
             with col:
                 if images:
-                    st.image(
+                    image_full_width(
                         images[0],
                         caption=family,
-                        use_column_width=True,
                         clamp=True,
                     )
                 else:
@@ -222,9 +227,8 @@ def _render_image_grid(
         cols = st.columns(n_cols)
         for idx, (col, img_array) in enumerate(zip(cols, row_images)):
             with col:
-                st.image(
+                image_full_width(
                     img_array,
                     caption=f"{family_name} #{row_start + idx + 1}",
-                    use_column_width=True,
                     clamp=True,
                 )

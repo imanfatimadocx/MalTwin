@@ -61,16 +61,17 @@ class TestMitreMapper:
         db = load_mitre_db(tmp_path / 'missing.json')
         assert db == {}
 
+    @pytest.mark.rtm("AT-M8-01", "FR5.5")
     def test_all_25_families_present(self):
-        """The seeded JSON must have all 25 Malimg families."""
+        """The JSON must map all 25 Malimg families (folder names exactly as in the dataset)."""
         db = load_mitre_db()
         expected = {
             'Adialer.C', 'Agent.FYI', 'Allaple.A', 'Allaple.L',
-            'Alueron.gen!J', 'Autorun.K', 'BrowseFox.B', 'Dialplatform.B',
+            'Alueron.gen!J', 'Autorun.K', 'C2LOP.P', 'C2LOP.gen!g', 'Dialplatform.B',
             'Dontovo.A', 'Fakerean', 'Instantaccess', 'Lolyda.AA1',
             'Lolyda.AA2', 'Lolyda.AA3', 'Lolyda.AT', 'Malex.gen!J',
             'Obfuscator.AD', 'Rbot!gen', 'Skintrim.N', 'Swizzor.gen!E',
-            'Swizzor.gen!I', 'VB.AT', 'Wintrim.BX', 'Yuner.A', 'Zlob.gen!D',
+            'Swizzor.gen!I', 'VB.AT', 'Wintrim.BX', 'Yuner.A',
         }
         assert expected.issubset(db.keys()), \
             f"Missing families: {expected - db.keys()}"
@@ -101,6 +102,7 @@ class TestMitreMapper:
         assert len(result['tactics']) > 0
         assert len(result['techniques']) > 0
 
+    @pytest.mark.rtm("AT-M8-02", "FR5.5")
     def test_get_mitre_mapping_unknown_family(self):
         result = get_mitre_mapping('UnknownFamily.XYZ')
         assert result['found'] is False
@@ -163,6 +165,7 @@ class TestJsonReport:
         ranks = [p['rank'] for p in parsed['detection_result']['top3_predictions']]
         assert ranks == [1, 2, 3]
 
+    @pytest.mark.rtm("AT-M8-03", "FR5.6", "FR-B4")
     def test_contains_mitre_section(self, sample_report_data):
         parsed = json.loads(generate_json_report(sample_report_data))
         mitre = parsed['mitre_attack_ics']
@@ -219,6 +222,7 @@ class TestPdfReport:
         assert result is not None
         assert isinstance(result, bytes)
 
+    @pytest.mark.rtm("AT-M8-04", "FR5.6", "FR-B4")
     def test_output_starts_with_pdf_magic(self, sample_report_data):
         if not FPDF2_AVAILABLE:
             pytest.skip("fpdf2 not installed")
@@ -240,6 +244,7 @@ class TestPdfReport:
         result = pr.generate_pdf_report(sample_report_data)
         assert result is None
 
+    @pytest.mark.rtm("AT-M8-05", "FR5.6")
     def test_does_not_raise_on_bad_input(self):
         """Broken input must return None, never raise."""
         if not FPDF2_AVAILABLE:

@@ -150,16 +150,38 @@ def main():
             metrics_path = config.EVAL_METRICS_PATH
             serialisable = {
                 k: v for k, v in metrics.items()
-                if k not in ('confusion_matrix', 'per_class', 'classification_report')
+                if k not in ('confusion_matrix', 'per_class', 'classification_report', 'y_true', 'y_prob')
             }
             serialisable['per_class'] = {
                 family: dict(stats) for family, stats in metrics['per_class'].items()
             }
-            with open(metrics_path, 'w') as f:
+            with open(metrics_path, 'w', encoding='utf-8') as f:
                 json.dump(serialisable, f, indent=2)
             print(f"Eval metrics saved to {metrics_path}")
         except Exception as e:
             print(f"WARNING: Could not save eval metrics: {e}", file=sys.stderr)
+        try:
+            from modules.detection.evaluator import plot_confusion_matrix, plot_roc_curves
+            plot_confusion_matrix(metrics['confusion_matrix'], class_names,
+                                  config.CONFUSION_MATRIX_PATH)
+            if len(metrics['y_true']):
+                plot_roc_curves(metrics['y_true'], metrics['y_prob'], class_names,
+                                config.ROC_CURVE_PATH)
+            print(f"Plots saved to {config.PROCESSED_DIR}")
+        except Exception as e:
+            print(f"WARNING: Could not save plots: {e}", file=sys.stderr)
+
+        # ── 9. Balanced test set evaluation (equal samples per class) ───────────
+        try:
+            from modules.detection.balanced_eval import evaluate_balanced, format_balanced_table
+            if len(metrics['y_true']):
+                bal = evaluate_balanced(metrics['y_true'], metrics['y_prob'], class_names)
+                with open(config.BALANCED_EVAL_PATH, 'w', encoding='utf-8') as f:
+                    json.dump(bal, f, indent=2)
+                print(format_balanced_table(bal))
+                print(f"  Balanced evaluation → {config.BALANCED_EVAL_PATH}")
+        except Exception as e:
+            print(f"  WARNING: Could not run balanced evaluation: {e}", file=sys.stderr)
 
     sys.exit(0)
 

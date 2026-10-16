@@ -1,0 +1,35 @@
+@startuml
+!include ../style.iuml
+autonumber
+actor "Security Analyst" as A
+boundary "Detection page\n(Module 6)" as UI
+control "gradcam\n(Module 7)" as G
+entity "MalTwinCNN\n.gradcam_layer" as CNN
+participant "Captum\nLayerGradCam" as CAP
+A -> UI : enable "Show Grad-CAM"
+activate UI
+UI -> G : generate_gradcam(model, image, target_class)
+activate G
+G -> CAP : LayerGradCam(model, model.gradcam_layer)
+G -> CAP : attribute(x, target)
+activate CAP
+CAP -> CNN : forward + backward hooks
+CNN --> CAP : activations, gradients
+CAP --> G : attribution map
+deactivate CAP
+G -> G : ReLU, upsample to 128 × 128, normalise [0, 1]
+G -> G : overlay_heatmap(image, heatmap) → PNG
+alt any step fails
+  G --> UI : None
+  UI --> A : error message (detection result unchanged)
+else success
+  G --> UI : heatmap_array, overlay_png
+  deactivate G
+  UI --> A : overlay, colour explanation
+  opt download
+    A -> UI : click "Download Heatmap Overlay PNG"
+    UI --> A : gradcam_<family>.png
+  end
+end
+deactivate UI
+@enduml

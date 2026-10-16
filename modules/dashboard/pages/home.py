@@ -7,7 +7,7 @@ SRS refs: FR1.1, FR1.2, FR1.4
 import streamlit as st
 import plotly.graph_objects as go
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from collections import defaultdict
 
 import config
@@ -85,7 +85,7 @@ def _render_activity_chart(db_path):
     events = get_events_by_date_range(db_path, days_back=7)
 
     # Build date → count mapping for last 7 days
-    today = datetime.utcnow().date()
+    today = datetime.now(timezone.utc).replace(tzinfo=None).date()
     date_counts: dict = defaultdict(int)
     for i in range(7):
         day = today - timedelta(days=6 - i)
@@ -200,7 +200,10 @@ def _render_history_section() -> None:
     from modules.dashboard.db import get_filtered_events, get_family_list
 
     # ── Filter controls ───────────────────────────────────────────────────────
-    with st.expander("🔍 Filter & Sort", expanded=False):
+    # A bordered container, not an expander: this section is already inside the
+    # "Full Detection History" expander, and Streamlit < 1.40 forbids nesting them.
+    st.caption("🔍 Filter & Sort")
+    with st.container(border=True):
         col_f1, col_f2, col_f3, col_f4 = st.columns(4)
 
         with col_f1:

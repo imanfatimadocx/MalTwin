@@ -1,0 +1,1014 @@
+{
+ "groups": [
+  {
+   "id": "FR1",
+   "name": "Main Dashboard",
+   "modules": "Module 6"
+  },
+  {
+   "id": "FR2",
+   "name": "Digital Twin",
+   "modules": "Module 1"
+  },
+  {
+   "id": "FR3",
+   "name": "Binary Upload and Visualisation",
+   "modules": "Modules 2, 6"
+  },
+  {
+   "id": "FR4",
+   "name": "Dataset, Training and Evaluation",
+   "modules": "Modules 3, 4, 5"
+  },
+  {
+   "id": "FR5",
+   "name": "Malware Detection, Explanation and Reporting",
+   "modules": "Modules 5, 7, 8"
+  },
+  {
+   "id": "FR6",
+   "name": "Dynamic Behavioural Analysis",
+   "modules": "Module 9"
+  },
+  {
+   "id": "FR7",
+   "name": "Hybrid Static–Dynamic Verdict",
+   "modules": "Module 10"
+  },
+  {
+   "id": "FR-B",
+   "name": "Backend Event–Response",
+   "modules": "All modules"
+  }
+ ],
+ "functional": [
+  {
+   "id": "FR1.1",
+   "text": "The system shall display the operational status (active or inactive) of all ten modules on the main dashboard.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR1.2",
+   "text": "The system shall display cumulative detection statistics: total files analysed, malware detected, benign files and model accuracy.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR1.3",
+   "text": "The system shall provide persistent sidebar navigation to every screen.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR1.4",
+   "text": "The system shall display a feed of the most recent detection events.",
+   "priority": "Medium",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR1.5",
+   "text": "The system shall let the user filter the detection history by malware family, minimum confidence and date range, and sort it by time.",
+   "priority": "Medium",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR1.6",
+   "text": "The system shall let the user export the filtered detection history as a CSV file.",
+   "priority": "Low",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR1.7",
+   "text": "The system shall show in the sidebar whether a model is loaded, whether the dataset is available and which file is currently uploaded.",
+   "priority": "Medium",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR2.1",
+   "text": "The system shall let the user start and stop the Digital Twin IIoT simulation from the dashboard.",
+   "priority": "High",
+   "status": "Deferred (final evaluation)",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR2.2",
+   "text": "The system shall display a live log of the traffic exchanged between simulated IIoT nodes.",
+   "priority": "Medium",
+   "status": "Deferred (final evaluation)",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR2.3",
+   "text": "The system shall display the status of each simulated node (PLC, HMI, sensor, sandbox).",
+   "priority": "Medium",
+   "status": "Deferred (final evaluation)",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR2.4",
+   "text": "The system shall display a chart of simulated traffic by protocol (Modbus, MQTT, other).",
+   "priority": "Low",
+   "status": "Deferred (final evaluation)",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR2.5",
+   "text": "The system shall execute each sample inside an isolated container network with no route to the host's network.",
+   "priority": "High",
+   "status": "Deferred (final evaluation)",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR2.6",
+   "text": "The system shall capture the network traffic of each simulation run and export it as a Zeek conn.log for dynamic analysis.",
+   "priority": "High",
+   "status": "Deferred (final evaluation)",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR2.7",
+   "text": "The system shall show the planned Digital Twin architecture and live checks of its deployment prerequisites (Docker, Zeek, behaviour model).",
+   "priority": "Low",
+   "status": "Implemented (design only)",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR3.1",
+   "text": "The system shall accept PE and ELF binaries of up to 50 MB, identified by their magic bytes (MZ or 0x7F ELF).",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR3.2",
+   "text": "The system shall convert an accepted binary into a 128 × 128 grayscale image and display it within 3 seconds.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR3.3",
+   "text": "The system shall display the file's metadata: name, size, format and SHA-256 hash.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR3.4",
+   "text": "The system shall display a 256-bin pixel intensity histogram of the image.",
+   "priority": "Low",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR3.5",
+   "text": "The system shall reject an empty, oversized or non-PE/ELF file with an error message that states what happened, its cause and the action to take.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR3.6",
+   "text": "The system shall lay out the bytes using the Malimg (Nataraj) file-size width table before resizing, so that uploaded binaries match the training images.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR4.1",
+   "text": "The system shall load the Malimg dataset (one folder per family) and validate its integrity, reporting corrupt images, class counts and the imbalance ratio.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR4.2",
+   "text": "The system shall encode family labels as contiguous integer indices and normalise pixel values before training.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR4.3",
+   "text": "The system shall split the dataset into stratified training, validation and test sets (70 / 15 / 15) with a fixed random seed.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR4.4",
+   "text": "The system shall provide optional augmentation of training images with random rotation, flips and brightness changes (disabled by default after the Evaluation 3 ablation showed it lowers accuracy on byte images).",
+   "priority": "Medium",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR4.5",
+   "text": "The system shall provide optional Gaussian-noise injection into training images, as part of the augmentation option.",
+   "priority": "Low",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR4.6",
+   "text": "The system shall balance the training data with class-aware oversampling so that every family is drawn with equal probability in each epoch.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR4.7",
+   "text": "The system shall display a dataset gallery with sample images and the number of images per family.",
+   "priority": "Low",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR4.8",
+   "text": "The system shall train the CNN with configurable epochs, learning rate, batch size, oversampling strategy and augmentation on/off, from the dashboard or the command line.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR4.9",
+   "text": "The system shall display training progress and log output while training runs, and allow the user to stop it.",
+   "priority": "Medium",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR4.10",
+   "text": "The system shall save the best model weights (by validation accuracy) and the class list, and reload them for inference.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR4.11",
+   "text": "The system shall evaluate the model on the held-out test set and report accuracy, precision, recall, F1, the confusion matrix, ROC-AUC, per-class false positive rate and MCC.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR4.12",
+   "text": "The system shall report results on a class-balanced test set (equal samples per family, repeated random draws) together with balanced accuracy.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR4.13",
+   "text": "The system shall measure detection of families not seen in training with a leave-families-out experiment.",
+   "priority": "Medium",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR4.14",
+   "text": "The system shall include a Benign class built from clean system binaries and measure the false positive rate on clean files.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR5.1",
+   "text": "The system shall run the detection model on the uploaded binary when the user requests it.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR5.2",
+   "text": "The system shall display the top-1 family with a confidence bar coloured green (≥ 80%), amber (50–79%) or red (< 50%).",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR5.3",
+   "text": "The system shall display a chart of the probability of every class.",
+   "priority": "Medium",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR5.4",
+   "text": "The system shall display a Grad-CAM heatmap over the binary image when the user requests it.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR5.5",
+   "text": "The system shall display the MITRE ATT&CK for ICS tactics and techniques of the predicted family.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR5.6",
+   "text": "The system shall generate downloadable PDF and JSON forensic reports.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR5.7",
+   "text": "The system shall explain the Grad-CAM colours in text and let the user download the heatmap overlay as a PNG image.",
+   "priority": "Low",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR5.8",
+   "text": "The system shall present a file classified as Benign as benign, show no MITRE techniques for it and count it under benign files.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR6.1",
+   "text": "The system shall parse Zeek conn.log and IoT-23 conn.log.labeled network captures.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR6.2",
+   "text": "The system shall extract behavioural features from each flow without using IP addresses.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR6.3",
+   "text": "The system shall classify each flow as Benign, PortScan, C&C, DDoS, Attack, FileDownload or Okiru behaviour.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR6.4",
+   "text": "The system shall compute a capture-level score and verdict (MALICIOUS, SUSPICIOUS or BENIGN).",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR6.5",
+   "text": "The system shall explain the capture verdict with feature importance and each feature's deviation from benign traffic.",
+   "priority": "Medium",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR6.6",
+   "text": "The system shall map observed behaviours to MITRE ATT&CK for ICS techniques.",
+   "priority": "Medium",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR6.7",
+   "text": "The system shall provide a Dynamic Analysis screen to upload a capture and view its results.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR7.1",
+   "text": "The system shall fuse the static confidence and the dynamic score into one verdict with an agreement category (confirmed, static only, novel variant, no evidence).",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR7.2",
+   "text": "The system shall combine the MITRE techniques of both sources, tagged by the source that supports them.",
+   "priority": "Medium",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR7.3",
+   "text": "The system shall provide a Hybrid Verdict screen with a what-if simulator for the fusion rules.",
+   "priority": "Medium",
+   "status": "Implemented",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR7.4",
+   "text": "The system shall evaluate fusion on paired static and dynamic evidence of the same samples.",
+   "priority": "Medium",
+   "status": "Deferred (final evaluation)",
+   "source": "Added in revision"
+  },
+  {
+   "id": "FR-B1",
+   "text": "When a binary is uploaded, the system shall validate it, read its bytes and build the 2-D image.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR-B2",
+   "text": "When detection is requested, the system shall load the model, preprocess the image and run a forward pass.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR-B3",
+   "text": "When a detection result is available, the system shall log the event to SQLite without blocking the result.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR-B4",
+   "text": "When a report is requested, the system shall compile it with the MITRE data of the predicted family.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR-B5",
+   "text": "When the Digital Twin is started, the system shall create the containers and the isolated network.",
+   "priority": "High",
+   "status": "Deferred (final evaluation)",
+   "source": "SRS v1.0"
+  },
+  {
+   "id": "FR-B6",
+   "text": "When a heatmap is requested, the system shall compute Grad-CAM through hooks on the last convolutional layer.",
+   "priority": "High",
+   "status": "Implemented",
+   "source": "SRS v1.0"
+  }
+ ],
+ "nonfunctional": [
+  {
+   "id": "REL-1",
+   "category": "Reliability",
+   "text": "Identical input shall give identical results (variance < 0.5% over 10 runs).",
+   "status": "Implemented",
+   "verification": "Test"
+  },
+  {
+   "id": "REL-2",
+   "category": "Reliability",
+   "text": "Corrupt or malformed files shall be handled without a crash.",
+   "status": "Implemented",
+   "verification": "Test"
+  },
+  {
+   "id": "REL-3",
+   "category": "Reliability",
+   "text": "The Digital Twin shall run for at least 4 hours between failures.",
+   "status": "Deferred (final evaluation)",
+   "verification": "Deferred"
+  },
+  {
+   "id": "REL-4",
+   "category": "Reliability",
+   "text": "No detection record shall be lost on an unclean shutdown (SQLite WAL).",
+   "status": "Implemented",
+   "verification": "Test"
+  },
+  {
+   "id": "REL-5",
+   "category": "Reliability",
+   "text": "Two concurrent dashboard sessions shall not interfere with each other.",
+   "status": "Implemented",
+   "verification": "Inspection"
+  },
+  {
+   "id": "USE-1",
+   "category": "Usability",
+   "text": "A first-time user shall complete upload and detection in under 5 minutes.",
+   "status": "Implemented",
+   "verification": "User trial"
+  },
+  {
+   "id": "USE-2",
+   "category": "Usability",
+   "text": "Visual indicators shall be interpretable without a machine-learning background.",
+   "status": "Implemented",
+   "verification": "Inspection"
+  },
+  {
+   "id": "USE-3",
+   "category": "Usability",
+   "text": "Every error message shall state what happened, its cause and the action to take.",
+   "status": "Implemented",
+   "verification": "Test"
+  },
+  {
+   "id": "USE-4",
+   "category": "Usability",
+   "text": "Technical terms shall have tooltips.",
+   "status": "Implemented",
+   "verification": "Inspection"
+  },
+  {
+   "id": "USE-5",
+   "category": "Usability",
+   "text": "Reports shall download in under 10 seconds and open in standard viewers.",
+   "status": "Implemented",
+   "verification": "Benchmark"
+  },
+  {
+   "id": "PER-1",
+   "category": "Performance",
+   "text": "Conversion shall take < 3 s for files ≤ 10 MB and < 10 s for files ≤ 50 MB.",
+   "status": "Implemented",
+   "verification": "Benchmark"
+  },
+  {
+   "id": "PER-2",
+   "category": "Performance",
+   "text": "Inference shall take < 5 s on CPU and < 1 s on GPU.",
+   "status": "Implemented",
+   "verification": "Benchmark"
+  },
+  {
+   "id": "PER-3",
+   "category": "Performance",
+   "text": "The dashboard shall render within 4 s on the local network.",
+   "status": "Implemented",
+   "verification": "User trial"
+  },
+  {
+   "id": "PER-4",
+   "category": "Performance",
+   "text": "Grad-CAM shall take < 8 s on CPU and < 3 s on GPU.",
+   "status": "Implemented",
+   "verification": "Benchmark"
+  },
+  {
+   "id": "PER-5",
+   "category": "Performance",
+   "text": "Report generation shall take < 10 s.",
+   "status": "Implemented",
+   "verification": "Benchmark"
+  },
+  {
+   "id": "PER-6",
+   "category": "Performance",
+   "text": "The database shall hold 100,000 records with queries under 500 ms.",
+   "status": "Implemented",
+   "verification": "Benchmark"
+  },
+  {
+   "id": "SEC-1",
+   "category": "Security",
+   "text": "Uploaded files shall be processed only inside an isolated container.",
+   "status": "Partial",
+   "verification": "Inspection"
+  },
+  {
+   "id": "SEC-2",
+   "category": "Security",
+   "text": "The Digital Twin network shall be isolated from the host network.",
+   "status": "Deferred (final evaluation)",
+   "verification": "Deferred"
+  },
+  {
+   "id": "SEC-3",
+   "category": "Security",
+   "text": "The database file shall have permission 600 (owner read/write only).",
+   "status": "Implemented",
+   "verification": "Test"
+  },
+  {
+   "id": "SEC-4",
+   "category": "Security",
+   "text": "SHA-256 shall be computed locally, with no external service.",
+   "status": "Implemented",
+   "verification": "Test"
+  },
+  {
+   "id": "SEC-5",
+   "category": "Security",
+   "text": "The dashboard shall be bound to localhost by default.",
+   "status": "Implemented",
+   "verification": "Inspection"
+  }
+ ],
+ "use_cases": [
+  {
+   "id": "UC-01",
+   "name": "Upload Binary File",
+   "actors": [
+    "Security Analyst"
+   ],
+   "frs": [
+    "FR3.1",
+    "FR3.2",
+    "FR3.5",
+    "FR3.6",
+    "FR-B1"
+   ],
+   "srs": "UC-01",
+   "desc": "The analyst uploads a suspicious PE or ELF binary, which is validated and converted into a grayscale image.",
+   "pre": "The dashboard is running.",
+   "main": [
+    "Analyst opens the Binary Upload screen.",
+    "Analyst selects a file.",
+    "System checks the size (≤ 50 MB) and the magic bytes.",
+    "System computes the SHA-256 hash and converts the bytes to a 128 × 128 image.",
+    "System displays the image and confirms the upload."
+   ],
+   "alt": [
+    "3a. File is empty, larger than 50 MB or not PE/ELF: system shows an error stating what, cause and action; the use case ends."
+   ],
+   "post": "The image and metadata are held in the session for detection.",
+   "rel": ""
+  },
+  {
+   "id": "UC-02",
+   "name": "View File Analysis",
+   "actors": [
+    "Security Analyst"
+   ],
+   "frs": [
+    "FR3.3",
+    "FR3.4"
+   ],
+   "srs": "part of UC-01",
+   "desc": "The analyst inspects the uploaded file's metadata, image and byte histogram.",
+   "pre": "A file has been uploaded (UC-01).",
+   "main": [
+    "System displays name, size, format and SHA-256.",
+    "System displays the grayscale image.",
+    "System displays the 256-bin pixel histogram."
+   ],
+   "alt": [
+    "1a. No file uploaded: system asks the analyst to upload one first."
+   ],
+   "post": "None (read-only).",
+   "rel": ""
+  },
+  {
+   "id": "UC-03",
+   "name": "Run Malware Detection",
+   "actors": [
+    "Security Analyst"
+   ],
+   "frs": [
+    "FR5.1",
+    "FR5.2",
+    "FR5.3",
+    "FR5.8",
+    "FR-B2",
+    "FR-B3"
+   ],
+   "srs": "UC-02",
+   "desc": "The analyst runs the CNN on the uploaded binary to obtain its malware family and confidence.",
+   "pre": "A file has been uploaded (UC-01).",
+   "main": [
+    "Analyst opens Malware Detection and clicks Run Detection.",
+    "System runs the CNN and computes class probabilities.",
+    "System displays the top-1 family with a colour-coded confidence bar and the probability chart.",
+    "System logs the detection event to SQLite.",
+    "System maps the family to MITRE ATT&CK for ICS (UC-04)."
+   ],
+   "alt": [
+    "1a. No file uploaded: system shows guidance to upload one.",
+    "2a. No trained model: system explains how to train one; the use case ends.",
+    "3a. Predicted class is Benign: system shows the file as benign and no MITRE techniques."
+   ],
+   "post": "A detection result exists and is recorded in the detection log.",
+   "rel": "«include» UC-04"
+  },
+  {
+   "id": "UC-04",
+   "name": "Map to MITRE ATT&CK for ICS",
+   "actors": [],
+   "frs": [
+    "FR5.5",
+    "FR6.6",
+    "FR7.2"
+   ],
+   "srs": "part of UC-02",
+   "desc": "Included use case: looks up the ICS tactics and techniques of a malware family or an observed behaviour.",
+   "pre": "A family or behaviour label is available.",
+   "main": [
+    "System looks up the label in the local MITRE mapping file.",
+    "System returns the tactics and the techniques (ID and name)."
+   ],
+   "alt": [
+    "1a. Label not in the mapping: system returns an empty mapping and says so."
+   ],
+   "post": "Tactics and techniques are displayed by the including use case.",
+   "rel": "included by UC-03, UC-06, UC-07"
+  },
+  {
+   "id": "UC-05",
+   "name": "View Grad-CAM Explanation",
+   "actors": [
+    "Security Analyst"
+   ],
+   "frs": [
+    "FR5.4",
+    "FR5.7",
+    "FR-B6"
+   ],
+   "srs": "part of UC-02",
+   "desc": "The analyst asks which regions of the binary drove the prediction.",
+   "pre": "A detection result exists (UC-03).",
+   "main": [
+    "Analyst enables the Grad-CAM option.",
+    "System computes Grad-CAM on the last convolutional layer for the predicted class.",
+    "System overlays the heatmap on the image and explains the colours.",
+    "Analyst may download the overlay as PNG."
+   ],
+   "alt": [
+    "2a. Grad-CAM fails: system shows an error; the detection result is unaffected."
+   ],
+   "post": "The heatmap is available for the report.",
+   "rel": "«extend» UC-03 (extension point: after result)"
+  },
+  {
+   "id": "UC-06",
+   "name": "Generate Forensic Report",
+   "actors": [
+    "Security Analyst",
+    "Academic Evaluator"
+   ],
+   "frs": [
+    "FR5.6",
+    "FR-B4"
+   ],
+   "srs": "UC-03",
+   "desc": "A PDF or JSON forensic report of the detection is produced for download.",
+   "pre": "A detection result exists (UC-03).",
+   "main": [
+    "Actor chooses PDF or JSON report.",
+    "System compiles file details, prediction, top-3 classes, MITRE mapping (UC-04) and heatmap if present.",
+    "System offers the report for download and records a report event."
+   ],
+   "alt": [
+    "2a. PDF library unavailable or generation fails: system shows an error and still offers JSON."
+   ],
+   "post": "A report file is downloaded and a report event is logged.",
+   "rel": "«include» UC-04"
+  },
+  {
+   "id": "UC-07",
+   "name": "Analyse Network Capture",
+   "actors": [
+    "Security Analyst"
+   ],
+   "frs": [
+    "FR6.1",
+    "FR6.2",
+    "FR6.3",
+    "FR6.4",
+    "FR6.5",
+    "FR6.7"
+   ],
+   "srs": "new (addendum)",
+   "desc": "The analyst uploads a Zeek conn.log of a sample's traffic to classify its network behaviour.",
+   "pre": "A trained behaviour model exists.",
+   "main": [
+    "Analyst opens Dynamic Analysis and uploads a conn.log.",
+    "System parses the flows and extracts 61 IP-free features.",
+    "System classifies every flow and computes the capture score and verdict.",
+    "System shows behaviours, the most influential features and MITRE techniques (UC-04)."
+   ],
+   "alt": [
+    "1a. File is not a valid conn.log: system shows an error stating what, cause and action.",
+    "1b. No behaviour model: system explains how to train one; the use case ends."
+   ],
+   "post": "A capture score is available for the hybrid verdict.",
+   "rel": "«include» UC-04"
+  },
+  {
+   "id": "UC-08",
+   "name": "View Hybrid Verdict",
+   "actors": [
+    "Security Analyst"
+   ],
+   "frs": [
+    "FR7.1",
+    "FR7.2",
+    "FR7.3"
+   ],
+   "srs": "new (addendum)",
+   "desc": "The analyst sees one verdict that combines static and dynamic evidence, with the reason for it.",
+   "pre": "A static result (UC-03), a capture score (UC-07), or both, exist.",
+   "main": [
+    "Analyst opens Hybrid Verdict.",
+    "System fuses the two scores with weights 0.5 / 0.5.",
+    "System assigns MALICIOUS, SUSPICIOUS or BENIGN and the agreement category.",
+    "System lists the MITRE techniques of both sources, tagged by source."
+   ],
+   "alt": [
+    "2a. Only one source available: verdict is computed from that source alone.",
+    "2b. Neither available: system offers the what-if simulator only."
+   ],
+   "post": "The hybrid verdict can be downloaded as JSON.",
+   "rel": ""
+  },
+  {
+   "id": "UC-09",
+   "name": "View Dashboard and Detection History",
+   "actors": [
+    "Security Analyst",
+    "Academic Evaluator"
+   ],
+   "frs": [
+    "FR1.1",
+    "FR1.2",
+    "FR1.3",
+    "FR1.4",
+    "FR1.5",
+    "FR1.6",
+    "FR1.7"
+   ],
+   "srs": "new",
+   "desc": "The actor reviews module status, detection statistics and the filterable detection history.",
+   "pre": "The dashboard is running.",
+   "main": [
+    "Actor opens the main dashboard.",
+    "System shows module status and detection statistics.",
+    "System lists recent detections.",
+    "Actor filters the history by family, confidence and date, and may export it to CSV."
+   ],
+   "alt": [
+    "3a. No detections yet: system says the history is empty."
+   ],
+   "post": "None (read-only).",
+   "rel": ""
+  },
+  {
+   "id": "UC-10",
+   "name": "Prepare Training Dataset",
+   "actors": [],
+   "frs": [
+    "FR4.1",
+    "FR4.2",
+    "FR4.3",
+    "FR4.4",
+    "FR4.5",
+    "FR4.6",
+    "FR4.7"
+   ],
+   "srs": "part of UC-05",
+   "desc": "Included use case: loads, validates, splits, augments and balances the Malimg dataset.",
+   "pre": "The Malimg dataset (and optionally the Benign class) is present on disk.",
+   "main": [
+    "System validates dataset integrity and reports class counts.",
+    "System encodes labels and makes a stratified 70/15/15 split.",
+    "System builds the training loader with augmentation and class-aware oversampling."
+   ],
+   "alt": [
+    "1a. Dataset missing or empty: system reports the expected folder; the use case ends."
+   ],
+   "post": "Balanced training, validation and test loaders are ready.",
+   "rel": "included by UC-11"
+  },
+  {
+   "id": "UC-11",
+   "name": "Train Detection Models",
+   "actors": [
+    "Security Researcher"
+   ],
+   "frs": [
+    "FR4.8",
+    "FR4.9",
+    "FR4.10",
+    "FR4.14"
+   ],
+   "srs": "UC-05",
+   "desc": "The researcher trains the CNN (and, from the command line, the behaviour model).",
+   "pre": "The dataset is available.",
+   "main": [
+    "Researcher sets epochs, learning rate, batch size and oversampling strategy, and starts training.",
+    "System prepares the dataset (UC-10).",
+    "System trains the model and shows progress and log output.",
+    "System saves the best weights and class list and reloads the model."
+   ],
+   "alt": [
+    "3a. Researcher stops training: system terminates the job and keeps the last best weights.",
+    "3b. Training fails: system shows the error output."
+   ],
+   "post": "A trained model is saved and loaded for detection.",
+   "rel": "«include» UC-10"
+  },
+  {
+   "id": "UC-12",
+   "name": "Evaluate Detection Model",
+   "actors": [
+    "Security Researcher",
+    "Academic Evaluator"
+   ],
+   "frs": [
+    "FR4.11",
+    "FR4.12",
+    "FR4.13"
+   ],
+   "srs": "new",
+   "desc": "The model is evaluated on held-out data, a class-balanced test set, unseen families and clean files.",
+   "pre": "A trained model exists (UC-11).",
+   "main": [
+    "Researcher runs the evaluation.",
+    "System computes the metrics on the full test split.",
+    "System computes the metrics on repeated class-balanced draws.",
+    "System saves metrics and plots; the evaluator views them."
+   ],
+   "alt": [
+    "1a. No model: system reports that training must be run first."
+   ],
+   "post": "Metrics files and plots are saved.",
+   "rel": ""
+  },
+  {
+   "id": "UC-13",
+   "name": "Run Digital Twin Simulation",
+   "actors": [
+    "Security Researcher",
+    "System Administrator"
+   ],
+   "frs": [
+    "FR2.1",
+    "FR2.5",
+    "FR2.6",
+    "FR-B5"
+   ],
+   "srs": "UC-04",
+   "planned": true,
+   "desc": "A sample is executed inside the isolated IIoT twin and its traffic is captured.",
+   "pre": "Docker and Zeek are installed (UC-15).",
+   "main": [
+    "Actor starts the simulation with a sample.",
+    "System creates the PLC, HMI, sensor and sandbox containers on an internal network.",
+    "System runs the sample and records traffic with Zeek.",
+    "System stops the twin and exports the conn.log."
+   ],
+   "alt": [
+    "2a. Docker unavailable: system reports the missing prerequisite."
+   ],
+   "post": "A conn.log of the sample's behaviour is available for UC-07.",
+   "rel": ""
+  },
+  {
+   "id": "UC-14",
+   "name": "Monitor Digital Twin",
+   "actors": [
+    "Security Researcher"
+   ],
+   "frs": [
+    "FR2.2",
+    "FR2.3",
+    "FR2.4"
+   ],
+   "srs": "part of UC-04",
+   "planned": true,
+   "desc": "While a simulation runs, the researcher watches node status and traffic.",
+   "pre": "A simulation is running (UC-13).",
+   "main": [
+    "System shows each node's status.",
+    "System streams the traffic log.",
+    "System shows traffic by protocol."
+   ],
+   "alt": [
+    "1a. A node stops: system marks it as down."
+   ],
+   "post": "None (read-only).",
+   "rel": "«extend» UC-13"
+  },
+  {
+   "id": "UC-15",
+   "name": "Check Twin Prerequisites",
+   "actors": [
+    "System Administrator"
+   ],
+   "frs": [
+    "FR2.7"
+   ],
+   "srs": "new",
+   "desc": "The administrator checks whether the machine is ready to host the Digital Twin.",
+   "pre": "The dashboard is running.",
+   "main": [
+    "Administrator opens the Digital Twin screen.",
+    "System checks Docker, Zeek and the behaviour model.",
+    "System shows each check as passed or missing with the action to fix it."
+   ],
+   "alt": [],
+   "post": "None (read-only).",
+   "rel": ""
+  }
+ ]
+}

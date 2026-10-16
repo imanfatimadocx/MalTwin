@@ -1,0 +1,19 @@
+digraph DFD1 { fontname="DejaVu Sans"; node [fontname="DejaVu Sans", fontsize=12, color="#1F3864"]; edge [fontname="DejaVu Sans", fontsize=10, color="#333333"]; bgcolor=white; rankdir=TB; nodesep=0.6; ranksep=0.75;
+ node [shape=box, style=filled, fillcolor="#F2F2F2", penwidth=1.6, margin="0.18,0.1"];
+ SA [label="Security\nAnalyst"]; SR [label="Security\nResearcher"]; DS [label="Public Datasets\n(Malimg, IoT-23)"];
+ DT [label="Digital Twin\n(planned)"]; MK [label="MITRE ATT&CK\nfor ICS knowledge base"];
+ node [shape=circle, style=filled, fillcolor="#DCE4F2", penwidth=1.6, fixedsize=true, width=1.45];
+ P1 [label="1.0\nValidate &\nConvert Binary"]; P2 [label="2.0\nClassify\nBinary"]; P3 [label="3.0\nAnalyse\nBehaviour"];
+ P4 [label="4.0\nFuse &\nExplain"]; P5 [label="5.0\nProduce\nReport"]; P6 [label="6.0\nTrain\nModels"];
+ D1 [shape=plain, fixedsize=false, width=0, height=0, style="", label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="7"><TR><TD BORDER="1" SIDES="TBR" COLOR="#1F3864"><B>D1</B></TD><TD BORDER="1" SIDES="TB" COLOR="#1F3864">Model Files</TD></TR></TABLE>>]; D2 [shape=plain, fixedsize=false, width=0, height=0, style="", label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="7"><TR><TD BORDER="1" SIDES="TBR" COLOR="#1F3864"><B>D2</B></TD><TD BORDER="1" SIDES="TB" COLOR="#1F3864">Detection Log</TD></TR></TABLE>>]; D3 [shape=plain, fixedsize=false, width=0, height=0, style="", label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="7"><TR><TD BORDER="1" SIDES="TBR" COLOR="#1F3864"><B>D3</B></TD><TD BORDER="1" SIDES="TB" COLOR="#1F3864">Evaluation Metrics</TD></TR></TABLE>>];
+ SA -> P1 [label="binary file"]; P1 -> P2 [label="image, SHA-256"];
+ D1 -> P2 [label="CNN weights"]; P2 -> D2 [label="detection event"]; P2 -> P4 [label="family, confidence"];
+ SA -> P3 [label="network capture"]; DT -> P3 [label="traffic capture"]; D1 -> P3 [label="behaviour model"];
+ P3 -> P4 [label="capture score, behaviours"]; MK -> P4 [label="tactics & techniques"];
+ P4 -> P5 [label="fusion result"]; SA -> P5 [label="report request"]; D2 -> P5 [label="detection history"];
+ D3 -> P5 [label="model accuracy"]; P5 -> D2 [label="report event"];
+ P5 -> SA [label="verdict, explanation,\nreport, statistics"];
+ SR -> P6 [label="training request"]; DS -> P6 [label="labelled samples"];
+ P6 -> D1 [label="model weights"]; P6 -> D3 [label="metrics"]; P6 -> SR [label="evaluation metrics"];
+ {rank=same; SA; SR; DS;} {rank=same; P1; P3; P6;}
+}

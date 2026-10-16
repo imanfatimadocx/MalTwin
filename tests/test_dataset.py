@@ -57,6 +57,7 @@ class TestLabelEncoding:
         mapping = preprocessor.encode_labels(FAMILIES)
         assert len(mapping) == len(FAMILIES)
 
+    @pytest.mark.rtm("AT-M3-02", "FR4.2")
     def test_encode_indices_are_contiguous(self, loader_mod):
         _, preprocessor = loader_mod
         mapping = preprocessor.encode_labels(FAMILIES)
@@ -90,6 +91,7 @@ class TestMalimgDataset:
         ds = loader.MalimgDataset(synthetic_malimg, split="test")
         assert len(ds) >= 0
 
+    @pytest.mark.rtm("AT-M3-01", "FR4.3")
     def test_splits_sum_to_total(self, loader_mod, synthetic_malimg):
         loader, _ = loader_mod
         train_ds = loader.MalimgDataset(synthetic_malimg, split="train")
@@ -138,6 +140,7 @@ class TestMalimgDataset:
         assert isinstance(labels, list)
         assert len(labels) == len(ds)
 
+    @pytest.mark.rtm("AT-M3-03", "FR4.1")
     def test_missing_dir_raises(self, loader_mod, tmp_path):
         loader, _ = loader_mod
         with pytest.raises(FileNotFoundError):
@@ -215,7 +218,8 @@ class TestMalimgIntegration:
         from modules.dataset.preprocessor import encode_labels
         families = [d.name for d in self.MALIMG_PATH.iterdir() if d.is_dir()]
         mapping = encode_labels(families)
-        assert len(mapping) == 25
+        # 25 Malimg families, plus the optional Benign class (scripts/build_benign_class.py)
+        assert len(mapping) == 25 + ('Benign' in mapping)
 
     def test_full_dataloader_one_batch(self, loader_mod):
         loader, _ = loader_mod
@@ -225,3 +229,17 @@ class TestMalimgIntegration:
         images, labels = next(iter(train_dl))
         assert images.shape[1] == 1
         assert len(class_names) == 25
+
+def test_unit_tests_never_touch_real_class_names(loader_mod, synthetic_malimg):
+    """Regression: running the test suite overwrote data/processed/class_names.json
+    with a 5-family list, so the dashboard could not load the trained 26-class model."""
+    import config
+    from pathlib import Path
+    real = Path(__file__).resolve().parent.parent / 'data' / 'processed' / 'class_names.json'
+    before = real.read_bytes() if real.exists() else None
+    loader, _ = loader_mod
+    loader.get_dataloaders(data_dir=synthetic_malimg, batch_size=4, num_workers=0)
+    assert config.CLASS_NAMES_PATH != real                  # redirected by conftest
+    assert config.CLASS_NAMES_PATH.exists()                 # ...and written there instead
+    after = real.read_bytes() if real.exists() else None
+    assert before == after

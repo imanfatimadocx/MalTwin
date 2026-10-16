@@ -12,6 +12,7 @@ import config
 from modules.detection.inference import predict_single
 from modules.dashboard.db import log_detection_event
 from modules.dashboard import state
+from modules.dashboard.theme import mono
 
 
 def render():
@@ -96,8 +97,9 @@ def _run_detection() -> None:
             result = predict_single(model, img_array, class_names, config.DEVICE)
             st.session_state[state.KEY_DETECTION] = result
 
-            # Log to SQLite — non-blocking (log_detection_event never raises)
-            log_detection_event(
+            # Log to SQLite — non-blocking (log_detection_event never raises);
+            # the row id links any report generated later (report_events FK)
+            st.session_state[state.KEY_DETECTION_EVENT_ID] = log_detection_event(
                 db_path=config.DB_PATH,
                 file_name=meta['name'],
                 sha256=meta['sha256'],
@@ -216,7 +218,28 @@ def _render_results() -> None:
     # ── A: Prediction + Confidence ────────────────────────────────────────────
     st.subheader("Detection Result")
 
-    if confidence >= config.CONFIDENCE_GREEN:
+    true_family = (st.session_state.get(state.KEY_FILE_META) or {}).get('true_family')
+    if true_family:
+        ok = (true_family == family)
+        st.markdown(
+            f"**Ground truth (Malimg test split):** `{true_family}` "
+            + ("— prediction correct ✅" if ok else f"— prediction **wrong** ❌ (predicted `{family}`)")
+        )
+
+    is_benign = (family == config.BENIGN_CLASS_NAME)
+    has_benign_class = config.BENIGN_CLASS_NAME in result.get('probabilities', {})
+
+    if is_benign and confidence >= config.CONFIDENCE_AMBER:
+        st.success(
+            f"No malware family matched — classified **Benign** "
+            f"({confidence * 100:.1f}% confidence)"
+        )
+    elif is_benign:
+        st.warning(
+            f"Leaning Benign, but only {confidence * 100:.1f}% confident. "
+            "Manual verification recommended."
+        )
+    elif confidence >= config.CONFIDENCE_GREEN:
         st.success(f"Detected: {family} — {confidence * 100:.1f}% confidence")
     elif confidence >= config.CONFIDENCE_AMBER:
         st.warning(
@@ -237,7 +260,7 @@ def _render_results() -> None:
         f'border-radius:6px;padding:20px 24px;margin-bottom:16px;">'
         f'<div style="font-family:\'DM Sans\',sans-serif;font-size:13px;'
         f'color:{COLORS["text_secondary"]};margin-bottom:8px;letter-spacing:0.04em;">'
-        f'DETECTED FAMILY</div>'
+        f'{"CLASSIFICATION" if is_benign else "DETECTED FAMILY"}</div>'
         f'<div style="font-family:\'JetBrains Mono\',monospace;font-size:26px;'
         f'font-weight:700;color:{COLORS["text_primary"]};margin-bottom:16px;">'
         f'{family}</div>'
@@ -246,13 +269,19 @@ def _render_results() -> None:
         unsafe_allow_html=True,
     )
 
-    # Benign class notice (architectural constraint — SRS_COMPLIANCE.md)
-    st.caption(
-        "MalTwin classifies binaries into known malware families only. "
-        "There is no benign class — every uploaded binary receives a malware family prediction. "
-        "Low confidence scores (<50%) indicate the binary may not match any trained family. "
-        "This is a known architectural constraint of the Malimg-trained model."
-    )
+    if has_benign_class:
+        st.caption(
+            f"The model knows {len(result['probabilities']) - 1} malware families plus a "
+            "Benign class built from clean system binaries. Malware probability = "
+            f"{(1 - result['probabilities'].get(config.BENIGN_CLASS_NAME, 0)) * 100:.1f}%."
+        )
+    else:
+        st.caption(
+            "This model was trained on Malimg only, which has no benign class — every "
+            "binary receives a malware family prediction. Low confidence (<50%) suggests "
+            "the binary may not match any known family. Build the Benign class with "
+            "scripts/build_benign_class.py and retrain to fix this."
+        )
 
     # ── B: Top-3 Predictions ──────────────────────────────────────────────────
     st.markdown("**Top 3 Predictions:**")
@@ -284,7 +313,10 @@ def _render_results() -> None:
             "techniques specific to operational technology environments."
         ),
     )
-    _render_mitre_mapping(family)
+    if is_benign:
+        st.info("No MITRE ATT&CK techniques — the binary was classified as Benign.")
+    else:
+        _render_mitre_mapping(family)
 
     st.markdown("---")
 
@@ -342,7 +374,7 @@ def _render_results() -> None:
                 from modules.dashboard.db import log_report_event
                 log_report_event(
                     config.DB_PATH,
-                    detection_event_id=None,   # not tracked in session state
+                    detection_event_id=st.session_state.get(state.KEY_DETECTION_EVENT_ID),
                     sha256=report_data['sha256'],
                     report_format='PDF',
                     gradcam_included=report_data['gradcam'].get('generated', False),
@@ -360,20 +392,22 @@ def _render_results() -> None:
         from modules.reporting.json_report import generate_json_report
         from modules.dashboard.db import log_report_event
         json_bytes = generate_json_report(report_data)
-        # Log JSON report generation (UC-03 postcondition)
-        log_report_event(
-            config.DB_PATH,
-            detection_event_id=None,
-            sha256=report_data['sha256'],
-            report_format='JSON',
-            gradcam_included=report_data['gradcam'].get('generated', False),
-        )
         meta = st.session_state[state.KEY_FILE_META]
+        # Log the JSON report when it is actually downloaded (UC-06 postcondition),
+        # not on every page render.
         st.download_button(
             label="📥 Download JSON Report",
             data=json_bytes,
             file_name=f"maltwin_report_{meta['sha256'][:8]}.json",
             mime="application/json",
+            on_click=log_report_event,
+            kwargs=dict(
+                db_path=config.DB_PATH,
+                detection_event_id=st.session_state.get(state.KEY_DETECTION_EVENT_ID),
+                sha256=report_data['sha256'],
+                report_format='JSON',
+                gradcam_included=report_data['gradcam'].get('generated', False),
+            ),
             use_container_width=True,
             help="Full structured JSON report with MITRE ATT&CK mapping and detection metadata.",
         )
@@ -470,7 +504,7 @@ def _render_mitre_mapping(predicted_family: str) -> None:
     Uses st.info (not st.error) when mapping is unavailable — never crashes the page.
     """
     try:
-        with open(config.MITRE_JSON_PATH, 'r') as f:
+        with open(config.MITRE_JSON_PATH, 'r', encoding='utf-8') as f:
             mitre_db = json.load(f)
     except FileNotFoundError:
         st.info(

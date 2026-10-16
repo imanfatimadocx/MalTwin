@@ -63,6 +63,7 @@ class TestGenerateGradcam:
         assert result is not None
         assert result['heatmap_array'].dtype == np.float32
 
+    @pytest.mark.rtm("AT-M7-01", "FR5.4", "FR-B6")
     def test_heatmap_array_range(self, model, img_array):
         result = generate_gradcam(model, img_array, target_class=0,
                                   device=torch.device('cpu'))
@@ -84,6 +85,7 @@ class TestGenerateGradcam:
         assert result is not None
         assert isinstance(result['heatmap_only_png'], bytes)
 
+    @pytest.mark.rtm("AT-M7-04", "FR5.7")
     def test_overlay_png_is_valid_image(self, model, img_array):
         result = generate_gradcam(model, img_array, target_class=0,
                                   device=torch.device('cpu'))
@@ -112,6 +114,7 @@ class TestGenerateGradcam:
         assert isinstance(result['captum_layer'], str)
         assert len(result['captum_layer']) > 0
 
+    @pytest.mark.rtm("AT-M7-02", "FR-B6")
     def test_uses_model_gradcam_layer_attribute(self, model, img_array):
         """
         Verify that generate_gradcam uses model.gradcam_layer.
@@ -123,6 +126,7 @@ class TestGenerateGradcam:
                                   device=torch.device('cpu'))
         assert result is not None
 
+    @pytest.mark.rtm("AT-M7-03", "FR-B6", "REL-2")
     def test_returns_none_on_bad_target_class(self, model, img_array):
         """
         An out-of-range target class should cause Captum to fail.

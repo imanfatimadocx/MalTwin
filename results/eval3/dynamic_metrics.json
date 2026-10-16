@@ -1,0 +1,212 @@
+{
+  "accuracy": 0.9998462437344322,
+  "precision_macro": 0.8999089253187613,
+  "recall_macro": 0.99946855367848,
+  "f1_macro": 0.9330219446054336,
+  "precision_weighted": 0.9999077042307507,
+  "recall_weighted": 0.9998462437344322,
+  "f1_weighted": 0.9998666856464965,
+  "per_class": {
+    "Attack": {
+      "precision": 1.0,
+      "recall": 0.9991617770326907,
+      "f1": 0.99958071278826,
+      "support": 1193
+    },
+    "Benign": {
+      "precision": 0.9995446265938069,
+      "recall": 0.998180991359709,
+      "f1": 0.9988623435722411,
+      "support": 2199
+    },
+    "C&C": {
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.6666666666666666,
+      "support": 4
+    },
+    "FileDownload": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 3
+    },
+    "PortScan": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 29120
+    }
+  },
+  "confusion_matrix": [
+    [
+      1192,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      2195,
+      4,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      4,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      3,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      29120
+    ]
+  ],
+  "labels": [
+    "Attack",
+    "Benign",
+    "C&C",
+    "FileDownload",
+    "PortScan"
+  ],
+  "binary": {
+    "detection_rate": 0.999967018469657,
+    "false_positive_rate": 0.0018190086402910413,
+    "precision": 0.9998680869307126,
+    "roc_auc": 0.9998631543961576,
+    "tp": 30319,
+    "fp": 4,
+    "tn": 2195,
+    "fn": 1
+  },
+  "num_test_flows": 32519,
+  "metadata": {
+    "data_source": "IoT-23",
+    "split": "random",
+    "n_train": 130072,
+    "n_test": 32519,
+    "classes": [
+      "Attack",
+      "Benign",
+      "C&C",
+      "FileDownload",
+      "PortScan"
+    ],
+    "seed": 42
+  },
+  "feature_importance": [
+    {
+      "feature": "port_http",
+      "importance": 0.0805433539574675,
+      "description": "Destination is HTTP 80/8080"
+    },
+    {
+      "feature": "port_ssh",
+      "importance": 0.06458792412671924,
+      "description": "Destination is SSH 22"
+    },
+    {
+      "feature": "resp_ip_bytes",
+      "importance": 0.05867520783443256,
+      "description": "IP-layer bytes received"
+    },
+    {
+      "feature": "bytes_per_pkt",
+      "importance": 0.05236250620990834,
+      "description": "Average bytes per packet"
+    },
+    {
+      "feature": "hist_fin",
+      "importance": 0.05080178825702249,
+      "description": "Number of FIN packets"
+    },
+    {
+      "feature": "hist_len",
+      "importance": 0.04824937800704872,
+      "description": "Length of TCP state history"
+    },
+    {
+      "feature": "svc_ssh",
+      "importance": 0.04434599981713149,
+      "description": "svc ssh"
+    },
+    {
+      "feature": "log_resp_bytes",
+      "importance": 0.04381803267663328,
+      "description": "Bytes received (log-scaled)"
+    },
+    {
+      "feature": "resp_bytes",
+      "importance": 0.042980622998748205,
+      "description": "Bytes received by the device"
+    },
+    {
+      "feature": "hist_retrans",
+      "importance": 0.033780899446642795,
+      "description": "Number of retransmissions"
+    },
+    {
+      "feature": "log_resp_pkts",
+      "importance": 0.03190143203944774,
+      "description": "Packets received (log-scaled)"
+    },
+    {
+      "feature": "resp_pkts",
+      "importance": 0.0318935352505673,
+      "description": "Packets received by the device"
+    },
+    {
+      "feature": "state_S0",
+      "importance": 0.030529360753489374,
+      "description": "SYN sent, never answered"
+    },
+    {
+      "feature": "duration",
+      "importance": 0.029193940153300155,
+      "description": "Connection duration (s)"
+    },
+    {
+      "feature": "log_duration",
+      "importance": 0.028525756787695554,
+      "description": "Connection duration (log-scaled)"
+    },
+    {
+      "feature": "orig_bytes",
+      "importance": 0.025468780880893594,
+      "description": "Bytes sent by the device"
+    },
+    {
+      "feature": "svc_http",
+      "importance": 0.025278606672743637,
+      "description": "svc http"
+    },
+    {
+      "feature": "hist_syn",
+      "importance": 0.022528870446758175,
+      "description": "Number of SYN packets"
+    },
+    {
+      "feature": "log_orig_pkts",
+      "importance": 0.02236486762396165,
+      "description": "Packets sent (log-scaled)"
+    },
+    {
+      "feature": "orig_ip_bytes",
+      "importance": 0.022179140423095066,
+      "description": "IP-layer bytes sent"
+    }
+  ]
+}

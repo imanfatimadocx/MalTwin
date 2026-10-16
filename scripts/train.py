@@ -13,7 +13,8 @@ Options (all optional — defaults come from config.py / .env):
     --workers     INT    DataLoader worker processes      [default: config.NUM_WORKERS]
     --oversample  STR    Oversampling strategy            [default: config.OVERSAMPLE_STRATEGY]
                          Choices: oversample_minority | sqrt_inverse | uniform
-    --no-augment         Disable training augmentation    [flag, default: augmentation ON]
+    --augment            Enable rotation/flip augmentation [flag, default: OFF — see config.AUGMENT_TRAIN]
+    --no-augment         Force augmentation off            [flag]
     --seed        INT    Random seed                      [default: config.RANDOM_SEED]
 
 Exit codes:
@@ -57,8 +58,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('--oversample', type=str,   default=config.OVERSAMPLE_STRATEGY,
                         choices=['oversample_minority', 'sqrt_inverse', 'uniform'],
                         help='Class oversampling strategy for training loader')
+    parser.add_argument('--augment', action='store_true',
+                        help='Enable rotation/flip/brightness augmentation (off by default: it '
+                             'reorders bytes and lowered accuracy in the Eval 3 ablation)')
     parser.add_argument('--no-augment', action='store_true',
-                        help='Disable training augmentation (use val transforms for train)')
+                        help='Force augmentation off (overrides --augment and MALTWIN_AUGMENT)')
     parser.add_argument('--seed',       type=int,   default=config.RANDOM_SEED,
                         help='Random seed for reproducibility')
     return parser.parse_args()
@@ -66,6 +70,8 @@ def parse_args() -> argparse.Namespace:
 
 def main():
     args = parse_args()
+    import config as _cfg
+    args.use_augment = (args.augment or _cfg.AUGMENT_TRAIN) and not args.no_augment
 
     # ── 1. Seed everything ─────────────────────────────────────────────────────
     torch.manual_seed(args.seed)
@@ -105,7 +111,7 @@ def main():
             batch_size=args.batch_size,
             num_workers=args.workers,
             oversample_strategy=args.oversample,
-            augment_train=not args.no_augment,
+            augment_train=args.use_augment,
             random_seed=args.seed,
         )
     except Exception as e:
@@ -116,7 +122,7 @@ def main():
     print(f"  Val batches:    {len(val_loader)}")
     print(f"  Test batches:   {len(test_loader)}")
     print(f"  Classes:        {len(class_names)}")
-    print(f"  Augmentation:   {'OFF (--no-augment)' if args.no_augment else 'ON'}")
+    print(f"  Augmentation:   {'ON (--augment)' if args.use_augment else 'OFF'}")
     print(f"  Oversample:     {args.oversample}")
 
     # ── 4. Build model ─────────────────────────────────────────────────────────
@@ -176,13 +182,14 @@ def main():
         # classification_report is a string — exclude (too verbose for dashboard)
         serialisable = {
             k: v for k, v in metrics.items()
-            if k not in ('confusion_matrix', 'per_class', 'classification_report')
+            if k not in ('confusion_matrix', 'per_class', 'classification_report',
+                         'y_true', 'y_prob')
         }
         # per_class contains nested dicts with Python floats/ints — safe to serialise
         serialisable['per_class'] = {
             family: dict(stats) for family, stats in metrics['per_class'].items()
         }
-        with open(metrics_path, 'w') as f:
+        with open(metrics_path, 'w', encoding='utf-8') as f:
             json.dump(serialisable, f, indent=2)
         print(f"  Eval metrics → {metrics_path}")
     except Exception as e:
@@ -196,6 +203,33 @@ def main():
         print(f"  Confusion matrix → {cm_path}")
     except Exception as e:
         print(f"  WARNING: Could not save confusion matrix: {e}", file=sys.stderr)
+
+    # ── 9. ROC curves, training curves, history ───────────────────────────────
+    try:
+        from modules.detection.evaluator import plot_roc_curves, plot_training_curves
+        if len(metrics['y_true']):
+            plot_roc_curves(metrics['y_true'], metrics['y_prob'], class_names,
+                            config.ROC_CURVE_PATH)
+            print(f"  ROC curves → {config.ROC_CURVE_PATH}")
+        plot_training_curves(history, config.TRAINING_CURVES_PATH)
+        with open(config.TRAINING_HISTORY_PATH, 'w', encoding='utf-8') as f:
+            json.dump({k: v for k, v in history.items()}, f, indent=2, default=float)
+        print(f"  Training curves → {config.TRAINING_CURVES_PATH}")
+    except Exception as e:
+        print(f"  WARNING: Could not save ROC/training curves: {e}", file=sys.stderr)
+
+
+    # ── 10. Balanced test set evaluation (equal samples per class) ───────────
+    try:
+        from modules.detection.balanced_eval import evaluate_balanced, format_balanced_table
+        if len(metrics['y_true']):
+            bal = evaluate_balanced(metrics['y_true'], metrics['y_prob'], class_names)
+            with open(config.BALANCED_EVAL_PATH, 'w', encoding='utf-8') as f:
+                json.dump(bal, f, indent=2)
+            print(format_balanced_table(bal))
+            print(f"  Balanced evaluation → {config.BALANCED_EVAL_PATH}")
+    except Exception as e:
+        print(f"  WARNING: Could not run balanced evaluation: {e}", file=sys.stderr)
 
     print("\n" + "=" * 55)
     print("Done!")
