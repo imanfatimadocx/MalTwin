@@ -218,7 +218,8 @@ class TestMalimgIntegration:
         from modules.dataset.preprocessor import encode_labels
         families = [d.name for d in self.MALIMG_PATH.iterdir() if d.is_dir()]
         mapping = encode_labels(families)
-        assert len(mapping) == 25
+        # 25 Malimg families, plus the optional Benign class (scripts/build_benign_class.py)
+        assert len(mapping) == 25 + ('Benign' in mapping)
 
     def test_full_dataloader_one_batch(self, loader_mod):
         loader, _ = loader_mod

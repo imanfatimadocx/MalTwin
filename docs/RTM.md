@@ -1,6 +1,6 @@
 # Requirement Traceability Matrix — MalTwin
 
-Generated 2026-10-16 20:49 by `scripts/generate_rtm.py` from a live test run. Each automated test case ID is an `@pytest.mark.rtm` marker on a real test in `tests/`.
+Generated 2026-10-16 21:10 by `scripts/generate_rtm.py` from a live test run. Each automated test case ID is an `@pytest.mark.rtm` marker on a real test in `tests/`.
 
 ## Requirements → automated tests
 

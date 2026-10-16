@@ -63,15 +63,15 @@ class TestMitreMapper:
 
     @pytest.mark.rtm("AT-M8-01", "FR5.5")
     def test_all_25_families_present(self):
-        """The seeded JSON must have all 25 Malimg families."""
+        """The JSON must map all 25 Malimg families (folder names exactly as in the dataset)."""
         db = load_mitre_db()
         expected = {
             'Adialer.C', 'Agent.FYI', 'Allaple.A', 'Allaple.L',
-            'Alueron.gen!J', 'Autorun.K', 'BrowseFox.B', 'Dialplatform.B',
+            'Alueron.gen!J', 'Autorun.K', 'C2LOP.P', 'C2LOP.gen!g', 'Dialplatform.B',
             'Dontovo.A', 'Fakerean', 'Instantaccess', 'Lolyda.AA1',
             'Lolyda.AA2', 'Lolyda.AA3', 'Lolyda.AT', 'Malex.gen!J',
             'Obfuscator.AD', 'Rbot!gen', 'Skintrim.N', 'Swizzor.gen!E',
-            'Swizzor.gen!I', 'VB.AT', 'Wintrim.BX', 'Yuner.A', 'Zlob.gen!D',
+            'Swizzor.gen!I', 'VB.AT', 'Wintrim.BX', 'Yuner.A',
         }
         assert expected.issubset(db.keys()), \
             f"Missing families: {expected - db.keys()}"

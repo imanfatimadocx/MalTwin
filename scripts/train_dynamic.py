@@ -42,6 +42,12 @@ def parse_args():
                    help='Uniform sample per file (IoT-23 files can hold millions of flows)')
     p.add_argument('--split', choices=['random', 'capture'], default='random',
                    help="'capture' holds out whole captures — a harder, more honest test")
+    p.add_argument('--test-captures', nargs='*', default=None,
+                   help="With --split capture: names (or parts of names) of the captures to test on. "
+                        "Default: one mostly-benign and one mostly-malicious capture, chosen by seed")
+    p.add_argument('--save-model', action='store_true',
+                   help='With --split capture: also overwrite the deployed model (normally only the '
+                        'random-split run, trained on more data, is deployed)')
     p.add_argument('--test-size', type=float, default=0.2)
     p.add_argument('--min-class-flows', type=int, default=10,
                    help='Drop behaviour classes with fewer flows than this')
@@ -130,11 +136,36 @@ def main():
     captures = df['capture'].unique()
     if args.split == 'capture' and len(captures) >= 2:
         rng = np.random.default_rng(args.seed)
-        n_test = max(1, int(round(len(captures) * args.test_size)))
-        test_caps = set(rng.choice(captures, n_test, replace=False))
+        if args.test_captures:
+            test_caps = {c for c in captures if any(t in c for t in args.test_captures)}
+            if not test_caps:
+                print(f"ERROR: no capture matches {args.test_captures}; available: {sorted(captures)}",
+                      file=sys.stderr)
+                sys.exit(1)
+        else:
+            # A useful held-out test needs both kinds of traffic: hold out one capture that is
+            # mostly benign and one that is mostly malicious (never the only capture of a kind).
+            mal_frac = (df['behaviour'] != 'Benign').groupby(df['capture']).mean()
+            benign_caps = sorted(mal_frac[mal_frac < 0.5].index)
+            mal_caps = sorted(mal_frac[mal_frac >= 0.5].index)
+            test_caps = set()
+            if len(benign_caps) >= 2:
+                test_caps.add(rng.choice(benign_caps))
+            if len(mal_caps) >= 2:
+                test_caps.add(rng.choice(mal_caps))
+            if not test_caps:
+                n_test = max(1, int(round(len(captures) * args.test_size)))
+                test_caps = set(rng.choice(captures, n_test, replace=False))
         test_mask = df['capture'].isin(test_caps)
         train_df, test_df = df[~test_mask], df[test_mask]
-        print(f"[2/4] Capture split — test captures: {sorted(test_caps)}")
+        test_caps = {str(c) for c in test_caps}
+        print(f"[2/4] Capture split — test captures (never seen in training): {sorted(test_caps)}")
+        for c in sorted(test_caps):
+            dist = df.loc[df['capture'] == c, 'behaviour'].value_counts().to_dict()
+            print(f"    {c}: {dist}")
+        unseen = set(test_df['behaviour']) - set(train_df['behaviour'])
+        if unseen:
+            print(f"  NOTE: behaviours only in the test captures (cannot be predicted): {sorted(unseen)}")
     else:
         if args.split == 'capture':
             print("  (only one capture available — falling back to random split)")
@@ -159,19 +190,32 @@ def main():
 
     meta = {'data_source': source, 'split': args.split, 'n_train': len(train_df),
             'n_test': len(test_df), 'classes': det.classes_, 'seed': args.seed}
-    det.save(config.DYNAMIC_MODEL_PATH, metadata=meta)
+    if args.split == 'capture':
+        meta['test_captures'] = sorted(map(str, set(test_df['capture'])))
+    # The capture-split run is an evaluation: its metrics and plots get their own file
+    # names, and it does not replace the deployed model unless asked to.
+    held_out = args.split == 'capture' and len(captures) >= 2
+    suffix = '_capture' if held_out else ''
+    metrics_path = config.DYNAMIC_METRICS_PATH.with_name(f'dynamic_metrics{suffix}.json')
+    cm_path = config.DYNAMIC_CM_PATH.with_name(f'dynamic_confusion_matrix{suffix}.png')
+    imp_path = config.DYNAMIC_IMPORTANCE_PATH.with_name(f'dynamic_feature_importance{suffix}.png')
+    if not held_out or args.save_model:
+        det.save(config.DYNAMIC_MODEL_PATH, metadata=meta)
 
     importance = det.feature_importance()
     out = {k: v for k, v in m.items() if k != 'classification_report'}
     out.update({'metadata': meta, 'feature_importance': importance[:20]})
-    with open(config.DYNAMIC_METRICS_PATH, 'w', encoding='utf-8') as f:
+    with open(metrics_path, 'w', encoding='utf-8') as f:
         json.dump(out, f, indent=2)
-    _plot_cm(m['confusion_matrix'], m['labels'], config.DYNAMIC_CM_PATH)
-    _plot_importance(importance, config.DYNAMIC_IMPORTANCE_PATH)
+    _plot_cm(m['confusion_matrix'], m['labels'], cm_path)
+    _plot_importance(importance, imp_path)
 
-    print(f"\nSaved model   → {config.DYNAMIC_MODEL_PATH}")
-    print(f"Saved metrics → {config.DYNAMIC_METRICS_PATH}")
-    print(f"Saved plots   → {config.DYNAMIC_CM_PATH.name}, {config.DYNAMIC_IMPORTANCE_PATH.name}")
+    if not held_out or args.save_model:
+        print(f"\nSaved model   → {config.DYNAMIC_MODEL_PATH}")
+    else:
+        print(f"\nModel not saved (held-out evaluation run; deployed model unchanged)")
+    print(f"Saved metrics → {metrics_path}")
+    print(f"Saved plots   → {cm_path.name}, {imp_path.name}")
 
 
 if __name__ == '__main__':

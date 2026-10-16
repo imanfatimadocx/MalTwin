@@ -15,7 +15,7 @@ class "detection_events" as DE <<table>> {
   device_used : TEXT NOT NULL
   ..
   <i>INDEX</i> idx_timestamp (timestamp)
-  <i>INDEX</i> idx_family (predicted_family)
+  <i>INDEX</i> idx_family_time (predicted_family, timestamp)
 }
 class "report_events" as RE <<table>> {
   <b>PK</b> id : INTEGER AUTOINCREMENT
