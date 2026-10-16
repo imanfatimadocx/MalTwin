@@ -229,3 +229,17 @@ class TestMalimgIntegration:
         images, labels = next(iter(train_dl))
         assert images.shape[1] == 1
         assert len(class_names) == 25
+
+def test_unit_tests_never_touch_real_class_names(loader_mod, synthetic_malimg):
+    """Regression: running the test suite overwrote data/processed/class_names.json
+    with a 5-family list, so the dashboard could not load the trained 26-class model."""
+    import config
+    from pathlib import Path
+    real = Path(__file__).resolve().parent.parent / 'data' / 'processed' / 'class_names.json'
+    before = real.read_bytes() if real.exists() else None
+    loader, _ = loader_mod
+    loader.get_dataloaders(data_dir=synthetic_malimg, batch_size=4, num_workers=0)
+    assert config.CLASS_NAMES_PATH != real                  # redirected by conftest
+    assert config.CLASS_NAMES_PATH.exists()                 # ...and written there instead
+    after = real.read_bytes() if real.exists() else None
+    assert before == after
