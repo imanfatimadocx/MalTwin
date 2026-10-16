@@ -1,6 +1,6 @@
 # Requirement Traceability Matrix — MalTwin
 
-Generated 2026-10-16 21:25 by `scripts/generate_rtm.py` from a live test run. Each automated test case ID is an `@pytest.mark.rtm` marker on a real test in `tests/`.
+Generated 2026-10-16 21:38 by `scripts/generate_rtm.py` from a live test run. Each automated test case ID is an `@pytest.mark.rtm` marker on a real test in `tests/`.
 
 ## Requirements → automated tests
 
@@ -21,7 +21,7 @@ Generated 2026-10-16 21:25 by `scripts/generate_rtm.py` from a live test run. Ea
 | FR2.6 | The system shall capture the network traffic of each simulation run and export it as a Zeek conn.log for dynamic analysis. | Deferred (final evaluation) | Deferred | — | — |
 | FR2.7 | The system shall show the planned Digital Twin architecture and live checks of its deployment prerequisites (Docker, Zeek, behaviour model). | Implemented (design only) | Test | AT-UI-09 | PASS |
 | FR3.1 | The system shall accept PE and ELF binaries of up to 50 MB, identified by their magic bytes (MZ or 0x7F ELF). | Implemented | Test | AT-M2-03, AT-M2-04 | PASS |
-| FR3.2 | The system shall convert an accepted binary into a 128 × 128 grayscale image and display it within 3 seconds. | Implemented | Test | AT-M2-01, AT-M2-02 | PASS |
+| FR3.2 | The system shall convert an accepted binary into a 128 × 128 grayscale image and display it within 3 seconds. | Implemented | Test | AT-M2-01, AT-M2-02, AT-UI-13 | PASS |
 | FR3.3 | The system shall display the file's metadata: name, size, format and SHA-256 hash. | Implemented | Test | AT-M2-06 | PASS |
 | FR3.4 | The system shall display a 256-bin pixel intensity histogram of the image. | Implemented | Test | AT-M2-07 | PASS |
 | FR3.5 | The system shall reject an empty, oversized or non-PE/ELF file with an error message that states what happened, its cause and the action to take. | Implemented | Test | AT-M2-04, AT-M2-05 | PASS |
@@ -41,7 +41,7 @@ Generated 2026-10-16 21:25 by `scripts/generate_rtm.py` from a live test run. Ea
 | FR4.13 | The system shall measure detection of families not seen in training with a leave-families-out experiment. | Implemented | Test | AT-M5-08 | PASS |
 | FR4.14 | The system shall include a Benign class built from clean system binaries and measure the false positive rate on clean files. | Implemented | Test | AT-M5-09, AT-M5-10 | PASS |
 | FR5.1 | The system shall run the detection model on the uploaded binary when the user requests it. | Implemented | Test | AT-M5-02, AT-UI-03, AT-UI-04 | PASS |
-| FR5.2 | The system shall display the top-1 family with a confidence bar coloured green (≥ 80%), amber (50–79%) or red (< 50%). | Implemented | Test | AT-M5-03, AT-UI-04 | PASS |
+| FR5.2 | The system shall display the top-1 family with a confidence bar coloured green (≥ 80%), amber (50–79%) or red (< 50%). | Implemented | Test | AT-M5-03, AT-UI-04, AT-UI-13 | PASS |
 | FR5.3 | The system shall display a chart of the probability of every class. | Implemented | Test | AT-UI-04 | PASS |
 | FR5.4 | The system shall display a Grad-CAM heatmap over the binary image when the user requests it. | Implemented | Test | AT-M7-01 | PASS |
 | FR5.5 | The system shall display the MITRE ATT&CK for ICS tactics and techniques of the predicted family. | Implemented | Test | AT-M8-01, AT-M8-02, AT-UI-04 | PASS |
@@ -169,11 +169,12 @@ Generated 2026-10-16 21:25 by `scripts/generate_rtm.py` from a live test run. Ea
 | AT-UI-10 | FR1.7 | `tests/test_ui.py::test_sidebar_shows_model_and_file_status` | 1 | PASS |
 | AT-UI-11 | FR1.6, FR1.5 | `tests/test_ui.py::test_history_offers_csv_export` | 1 | PASS |
 | AT-UI-12 | FR5.8, FR1.2 | `tests/test_ui.py::test_benign_prediction_is_shown_as_benign` | 1 | PASS |
+| AT-UI-13 | FR3.2, FR5.2 | `tests/test_ui.py::test_malimg_test_sample_can_be_analysed` | 1 | PASS |
 
 ## Summary
 
-- Automated test cases in RTM: **78** (84 executions incl. parameters)
-- Passed: **78**, failed: **0**, skipped: **0**
+- Automated test cases in RTM: **79** (85 executions incl. parameters)
+- Passed: **79**, failed: **0**, skipped: **0**
 - Requirements verified by test that are covered by at least one automated test: **57 / 57**
 - Deferred requirements (Digital Twin): FR2.1, FR2.2, FR2.3, FR2.4, FR2.5, FR2.6, FR7.4, FR-B5, REL-3, SEC-2
 - Verified by benchmark / inspection / user trial: REL-5, USE-1, USE-2, USE-4, USE-5, PER-1, PER-2, PER-3, PER-4, PER-5, PER-6, SEC-1, SEC-5

@@ -218,6 +218,14 @@ def _render_results() -> None:
     # ── A: Prediction + Confidence ────────────────────────────────────────────
     st.subheader("Detection Result")
 
+    true_family = (st.session_state.get(state.KEY_FILE_META) or {}).get('true_family')
+    if true_family:
+        ok = (true_family == family)
+        st.markdown(
+            f"**Ground truth (Malimg test split):** `{true_family}` "
+            + ("— prediction correct ✅" if ok else f"— prediction **wrong** ❌ (predicted `{family}`)")
+        )
+
     is_benign = (family == config.BENIGN_CLASS_NAME)
     has_benign_class = config.BENIGN_CLASS_NAME in result.get('probabilities', {})
 

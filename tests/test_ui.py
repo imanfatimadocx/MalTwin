@@ -221,3 +221,32 @@ def test_benign_prediction_is_shown_as_benign(env):
     assert "No MITRE ATT&CK techniques" in txt
     stats = get_detection_stats(config.DB_PATH)
     assert stats["total_benign"] == 1 and stats["total_malware"] == 0
+
+
+@pytest.mark.rtm("AT-UI-13", "FR3.2", "FR5.2")
+def test_malimg_test_sample_can_be_analysed(env, monkeypatch):
+    """Demo path without live malware: load a held-out Malimg test image on the
+    upload page, run detection, and see the ground truth next to the prediction."""
+    from PIL import Image
+    data = env / "malimg"
+    rng = np.random.default_rng(2)
+    for fam in CLASSES:
+        (data / fam).mkdir(parents=True)
+        for i in range(20):
+            Image.fromarray(rng.integers(0, 256, (64, 64), dtype=np.uint8)).save(data / fam / f"{i:02d}.png")
+    monkeypatch.setattr(config, "DATA_DIR", data)
+
+    at = _run(page="Binary Upload")
+    at.selectbox(key="test_family").set_value("Allaple.A").run()
+    [btn] = [b for b in at.button if b.key == "test_load"]
+    btn.click().run()
+    assert not at.exception, [e.value for e in at.exception]
+    meta = at.session_state[state.KEY_FILE_META]
+    assert meta["true_family"] == "Allaple.A" and meta["source"] == "malimg_test"
+    assert at.session_state[state.KEY_IMG_ARRAY].shape == (config.IMG_SIZE, config.IMG_SIZE)
+
+    at.sidebar.radio[0].set_value("Malware Detection").run()
+    [run] = [b for b in at.button if "Run Detection" in b.label]
+    run.click().run()
+    assert not at.exception, [e.value for e in at.exception]
+    assert "Ground truth (Malimg test split):** `Allaple.A` — prediction correct" in _text(at)
